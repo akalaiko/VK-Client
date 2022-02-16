@@ -10,6 +10,7 @@ import UIKit
 class AllGroupsTVC: UITableViewController {
     @IBOutlet var allGroupsSearch: UISearchBar!
     var allGroupsFiltered = [GroupModel]()
+    private let networkService = NetworkService()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +61,7 @@ extension AllGroupsTVC: UISearchBarDelegate {
             return
         }
         allGroupsFiltered = availableGroups.filter({ $0.name.lowercased().contains(searchText.lowercased()) })
+        networkService.fetchGroupsSearch(searchText)
         tableView.reloadData()
     }
     

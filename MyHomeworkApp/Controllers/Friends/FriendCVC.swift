@@ -15,6 +15,7 @@ final class FriendCVC: UICollectionViewController {
     static var freakingIndex = Int()
     var chosenPhoto = FriendPage()
     var enlargedPhoto = UIImageView()
+    private let networkService = NetworkService()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,6 +37,8 @@ final class FriendCVC: UICollectionViewController {
                 bundle: nil),
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "friendHeader")
+        
+        networkService.fetchPhotos()
         
     }
     

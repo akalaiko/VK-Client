@@ -13,6 +13,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     var friendsDictionary = [String: [FriendModel]]()
     var friendsSectionTitles = [String]()
     var friendsFilteredDictionary = [String: [FriendModel]]()
+    private let networkService = NetworkService()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +24,8 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
             forCellReuseIdentifier: "friendCell")
         configureSectionTitles()
         friendsFilteredDictionary = friendsDictionary
+        
+        networkService.fetchFriends()
 
     }
 

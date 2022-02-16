@@ -13,7 +13,8 @@ class MyGroupsTVC: UITableViewController {
     @IBOutlet var myGroupsSearch: UISearchBar!
     
     var groupsFiltered = [GroupModel]() 
-       
+    private let networkService = NetworkService()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         myGroupsSearch.delegate = self
@@ -23,6 +24,7 @@ class MyGroupsTVC: UITableViewController {
             forCellReuseIdentifier: "groupCell")
         
         groupsFiltered = userGroups
+        networkService.fetchGroups()
     }
     
     @IBAction func addGroup(segue: UIStoryboardSegue) {
