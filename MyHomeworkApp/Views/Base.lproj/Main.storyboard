@@ -111,7 +111,6 @@
         <!--Login View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="LoginViewController" id="BYZ-38-t0r" customClass="LoginViewController" customModule="MyHomeworkApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -206,6 +205,7 @@
                         <segue destination="4fQ-JD-TIC" kind="presentation" identifier="goToMain" modalPresentationStyle="fullScreen" modalTransitionStyle="flipHorizontal" id="55h-0P-8yG"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3508.6956521739135" y="110.49107142857143"/>
         </scene>
@@ -488,8 +488,8 @@
                     </tabBar>
                     <connections>
                         <segue destination="wRe-4H-G3Y" kind="relationship" relationship="viewControllers" id="9Jo-bb-ZNP"/>
-                        <segue destination="1Jv-aO-GRr" kind="relationship" relationship="viewControllers" id="gMZ-6o-bN6"/>
                         <segue destination="GIM-In-wXs" kind="relationship" relationship="viewControllers" id="GVX-L4-d8T"/>
+                        <segue destination="1Jv-aO-GRr" kind="relationship" relationship="viewControllers" id="gMZ-6o-bN6"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="5cy-e5-g5f" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

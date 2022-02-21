@@ -97,9 +97,6 @@ extension VKLoginVC: WKNavigationDelegate {
             let vc = storyboard?.instantiateViewController(withIdentifier: "main") as? UITabBarController
             vc?.modalPresentationStyle = .fullScreen
             self.present(vc ?? UIViewController(), animated: true, completion: nil)
-//            performSegue(
-//                withIdentifier: "goToLogin",
-//                sender: nil)
             
             decisionHandler(.cancel)
     }

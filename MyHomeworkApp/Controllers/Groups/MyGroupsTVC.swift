@@ -7,13 +7,21 @@
 
 import UIKit
 
-class MyGroupsTVC: UITableViewController {
+final class MyGroupsTVC: UITableViewController {
     
     
     @IBOutlet var myGroupsSearch: UISearchBar!
     
-    var groupsFiltered = [GroupModel]() 
+    var groupsFiltered = [Group]()
     private let networkService = NetworkService()
+    var userGroups = [Group]() {
+        didSet {
+            DispatchQueue.main.async {
+                self.groupsFiltered = self.userGroups
+                self.tableView.reloadData()
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,8 +31,22 @@ class MyGroupsTVC: UITableViewController {
             bundle: nil),
             forCellReuseIdentifier: "groupCell")
         
+        networkService.fetchGroups() { [weak self] result in
+            switch result {
+            case .success(let myGroups):
+                myGroups.items.forEach() { i in
+                    self?.userGroups.append(Group(
+                        name: i.name,
+                        avatar: i.avatar))
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+        
         groupsFiltered = userGroups
-        networkService.fetchGroups()
+
+        
     }
     
     @IBAction func addGroup(segue: UIStoryboardSegue) {
@@ -36,7 +58,7 @@ class MyGroupsTVC: UITableViewController {
         let group = allGroupsController.allGroupsFiltered[groupIndexPath.row]
         print(groupIndexPath)
         print(group)
-        userGroups.append(availableGroups.remove(at: availableGroups.firstIndex(of: group)!))
+//        userGroups.append(availableGroups.remove(at: availableGroups.firstIndex(of: group)!))
         groupsFiltered = userGroups
         tableView.reloadData()
     }
@@ -55,8 +77,8 @@ class MyGroupsTVC: UITableViewController {
         let myGroup = groupsFiltered[indexPath.row]
 
         cell.configure(
-            avatar: myGroup.avatar,
-            name: myGroup.name)
+            name: myGroup.name,
+            url: myGroup.avatar ?? "")
        
         return cell
     }
@@ -64,7 +86,7 @@ class MyGroupsTVC: UITableViewController {
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let removeGroup = groupsFiltered.remove(at: indexPath.row)
-            availableGroups.append(removeGroup)
+//            availableGroups.append(removeGroup)
             userGroups.remove(at: userGroups.firstIndex(where: {$0.name == removeGroup.name})!)
 
             if userGroups.filter({ $0.name.lowercased().contains(((myGroupsSearch.searchTextField.text!.lowercased()))) }).isEmpty {

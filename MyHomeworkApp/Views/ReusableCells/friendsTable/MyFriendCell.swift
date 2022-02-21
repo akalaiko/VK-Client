@@ -13,8 +13,8 @@ class MyFriendCell: UITableViewCell {
     @IBAction func avatarPressed() {
         AvatarImage.animateAvatar(friendAvatar)
     }
-    func configure(avatar: UIImage?, name: String) {
-        self.friendAvatar.image = avatar
+    func configure(name: String, url: String) {
+        self.friendAvatar.downloaded(from: "\(url)")
         self.friendName.text = name
     }
 }

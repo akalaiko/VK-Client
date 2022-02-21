@@ -14,8 +14,8 @@ class MyGroupsCell: UITableViewCell {
         AvatarImage.animateAvatar(groupAvatar)
     }
     
-    func configure(avatar: UIImage?, name: String) {
-        self.groupAvatar.image = avatar
+    func configure(name: String, url: String) {
+        self.groupAvatar.downloaded(from: "\(url)")
         self.groupName.text = name
     }
     

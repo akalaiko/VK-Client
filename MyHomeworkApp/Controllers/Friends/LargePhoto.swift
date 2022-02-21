@@ -10,8 +10,8 @@ import UIKit
 class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var photo: UIImageView!
     
-    var friend: FriendModel?
-    var photoArray = [ImageStruct]()
+    var friend: User?
+    var photos = [String]()
     var chosenPhotoIndex = Int()
     var photoSubview = UIImageView()
     
@@ -20,9 +20,11 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Photo \(chosenPhotoIndex + 1) of \(photoArray.count)"
-        photo.image = photoArray[chosenPhotoIndex].image
+        title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
+        photo.downloaded(from: photos[chosenPhotoIndex])
         photo.isUserInteractionEnabled = true
+        photo.contentMode = .scaleAspectFill
+        photoSubview.contentMode = .scaleAspectFill
 
 
         
@@ -97,7 +99,7 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
                     }
                 
             } completion: { isCompleted in
-                self.photo.image = self.photoArray[self.chosenPhotoIndex].image
+                self.photo.downloaded(from: self.photos[self.chosenPhotoIndex])
                 self.photo.alpha = 1
                 self.view.layoutIfNeeded()
             }
@@ -112,7 +114,7 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         switch side {
         case .right:
         photoSubview.center.x = photo.center.x * 2 + photoSubview.frame.size.width / 2
-           if chosenPhotoIndex + 1 < photoArray.count {
+           if chosenPhotoIndex + 1 < photos.count {
                chosenPhotoIndex += 1
            } else {
                chosenPhotoIndex = 0
@@ -122,14 +124,14 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
            if chosenPhotoIndex - 1 >= 0 {
                chosenPhotoIndex -= 1
            } else {
-               chosenPhotoIndex = photoArray.count - 1
+               chosenPhotoIndex = photos.count - 1
            }
         default:
             break
         }
         
-        photoSubview.image = photoArray[chosenPhotoIndex].image
-        title = "Photo \(chosenPhotoIndex + 1) of \(photoArray.count)"
+        photoSubview.downloaded(from: photos[chosenPhotoIndex])
+        title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
         view.addSubview(photoSubview)
        }
 

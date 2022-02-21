@@ -77,7 +77,8 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
             else { return UITableViewCell() }
             
             cell.configure(
-                avatar: news.group.avatar,
+//                avatar: news.group.avatar,
+                avatar: nil,
                 name: news.group.name,
                 newsTime: news.time)
             return cell

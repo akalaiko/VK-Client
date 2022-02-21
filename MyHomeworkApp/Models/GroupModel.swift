@@ -8,29 +8,39 @@
 import Foundation
 import UIKit
 
-struct GroupModel: Equatable {
-    
-    let name: String
-    var avatar: UIImage?
+struct GroupsResponse {
+    let response: Groups
+}
 
-    init (name: String, avatar: UIImage?){
-        self.name = name
-        self.avatar = avatar ?? UIImage(named: "default")
+extension GroupsResponse: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case response
     }
+}
     
-    static func ==(lhs: GroupModel, rhs: GroupModel) -> Bool {
-        return lhs.name == rhs.name
+struct Groups {
+    let count: Int
+    let items: [GroupData]
+}
+
+extension Groups: Codable {
+    enum CodingKeys: String, CodingKey {
+        case count
+        case items
     }
 }
 
-var userGroups: [GroupModel] = [
-    GroupModel(name: "Apple Fanboys", avatar: UIImage(named: "apple")),
-    GroupModel(name: "Ноготочки ЕКБ", avatar: UIImage(named: "women")),
-    GroupModel(name: "Официальное сообщество плоскоземельщиков", avatar: UIImage(named: "emc2")),
-    GroupModel(name: "С детства за Ньюкасл", avatar: UIImage(named: "cup"))
-]
+struct GroupData {
+    let id: Int
+    let name: String
+    let avatar: String
+}
 
-var availableGroups: [GroupModel] = [
-    GroupModel(name: "Книжный клуб", avatar: UIImage(named: "book")),
-    GroupModel(name: "Детективы Новосибирска", avatar: nil)
-]
+extension GroupData: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case avatar = "photo_100"
+    }
+}
+

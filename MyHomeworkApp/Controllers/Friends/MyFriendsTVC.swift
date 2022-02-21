@@ -10,9 +10,34 @@ import UIKit
 final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     @IBOutlet var searchBar: UISearchBar!
     
-    var friendsDictionary = [String: [FriendModel]]()
+    var friends = [User]() {
+        didSet {
+            for friend in friends where friend.firstName != "DELETED" {
+                friendsDictionary.removeAll()
+                friends.sort()
+                for index in friends.indices {
+                    let letterKey = String((friends[index].lastName).prefix(1))
+                        if var friendsOnLetterKey = friendsDictionary[letterKey] {
+                            friendsOnLetterKey.append(friends[index])
+                            friendsDictionary[letterKey] = friendsOnLetterKey
+                        } else {
+                            friendsDictionary[letterKey] = [friends[index]]
+                        }
+                }
+
+                friendsSectionTitles = [String](friendsDictionary.keys).sorted(by: { $0 < $1 })
+            }
+            DispatchQueue.main.async {
+
+                self.friendsFilteredDictionary = self.friendsDictionary
+                self.tableView.reloadData()
+            }
+        }
+    }
+    
+    var friendsDictionary = [String: [User]]()
     var friendsSectionTitles = [String]()
-    var friendsFilteredDictionary = [String: [FriendModel]]()
+    var friendsFilteredDictionary = [String: [User]]()
     private let networkService = NetworkService()
 
     override func viewDidLoad() {
@@ -22,11 +47,15 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
             nibName: "MyFriendCell",
             bundle: nil),
             forCellReuseIdentifier: "friendCell")
-        configureSectionTitles()
-        friendsFilteredDictionary = friendsDictionary
         
-        networkService.fetchFriends()
-
+        networkService.fetchFriends() { [weak self] result in
+            switch result {
+            case .success(let responseFriends):
+                self?.friends = responseFriends.items
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 
     // MARK: - Table view data source
@@ -56,10 +85,15 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as? MyFriendCell else { return UITableViewCell() }
+//        cell.friendAvatar.image = nil
         let letterKey = friendsSectionTitles[indexPath.section]
            if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
                let myFriend = friendsOnLetterKey[indexPath.row]
-               cell.configure(avatar: myFriend.avatar, name: myFriend.name)
+
+               
+               cell.configure(
+                   name: myFriend.fullName,
+                   url: myFriend.photo)
            }
         return cell
     }
@@ -70,7 +104,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         guard segue.identifier == "goToFriend", let indexPath = tableView.indexPathForSelectedRow else { return }
         guard let destination = segue.destination as? FriendCVC else { return }
         let letterKey = friendsSectionTitles[indexPath.section]
-           if let friendsOnLetterKey = friendsDictionary[letterKey] {
+           if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
                destination.friend = friendsOnLetterKey[indexPath.row]}
     }
     
@@ -82,27 +116,12 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         true
     }
-    
-    func configureSectionTitles() {
-        friendDatabase.sort()
-        for index in friendDatabase.indices {
-            let letterKey = String((friendDatabase[index].name).prefix(1))
-                if var friendsOnLetterKey = friendsDictionary[letterKey] {
-                    friendsOnLetterKey.append(friendDatabase[index])
-                    friendsDictionary[letterKey] = friendsOnLetterKey
-                } else {
-                    friendsDictionary[letterKey] = [friendDatabase[index]]
-                }
-        }
-        
-        friendsSectionTitles = [String](friendsDictionary.keys).sorted(by: { $0 < $1 })
-    }
 }
 
 // search
 
 extension MyFriendsTVC: UISearchBarDelegate {
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchBar.showsCancelButton = true
         guard !searchText.isEmpty else {
@@ -111,20 +130,20 @@ extension MyFriendsTVC: UISearchBarDelegate {
             tableView.reloadData()
             return
         }
-        
+
         friendsFilteredDictionary.removeAll()
         friendsSectionTitles.removeAll()
-        
+
         for key in friendsDictionary.keys {
             guard let friend = friendsDictionary[key] else { return }
-            friendsFilteredDictionary[key] = friend.filter({ $0.name.lowercased().contains(searchText.lowercased()) })
+            friendsFilteredDictionary[key] = friend.filter({ $0.fullName.lowercased().contains(searchText.lowercased()) })
         }
-        
+
         friendsSectionTitles = ([String](friendsFilteredDictionary.keys).sorted())
                                 .filter({ !friendsFilteredDictionary[$0]!.isEmpty })
         tableView.reloadData()
     }
-    
+
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchBar.text = nil
         searchBar.showsCancelButton = false
@@ -133,10 +152,10 @@ extension MyFriendsTVC: UISearchBarDelegate {
         friendsSectionTitles = [String](friendsFilteredDictionary.keys).sorted()
         tableView.reloadData()
     }
-    
+
     @objc func setSearchBar() {
         searchBar.searchTextField.text = ""
         searchBar.showsCancelButton = true
     }
-    
+
 }

@@ -9,13 +9,20 @@ import UIKit
 
 final class FriendCVC: UICollectionViewController {
     
-    var friend: FriendModel?
+    var friend: User?
     var viewForSmooth = UIView()
     var currentIndex = Int()
     static var freakingIndex = Int()
     var chosenPhoto = FriendPage()
     var enlargedPhoto = UIImageView()
     private let networkService = NetworkService()
+    var photos: [String]? = [] {
+        didSet {
+            DispatchQueue.main.async {
+                self.collectionView.reloadData()
+            }
+        }
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -38,13 +45,22 @@ final class FriendCVC: UICollectionViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "friendHeader")
         
-        networkService.fetchPhotos()
+        networkService.fetchPhotos(id: "\(friend!.id)"){ [weak self] result in
+            switch result {
+            case .success(let photos):
+                photos.items.forEach { i in
+                    self?.photos?.append(i.sizes.last!.url)
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
         
     }
     
     override func viewWillAppear(_ animated: Bool = false) {
         if CGFloat(viewForSmooth.alpha).rounded(.up) == 1 {
-            enlargedPhoto.image = photoDatabase[friend!.id]![FriendCVC.freakingIndex].image
+            enlargedPhoto.downloaded(from: photos![FriendCVC.freakingIndex])
             viewForSmooth.alpha = 1.0
             postAnimation([0, FriendCVC.freakingIndex])
         }
@@ -60,7 +76,8 @@ final class FriendCVC: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        photoDatabase[friend!.id]!.count
+        photos?.count ?? 0
+//        photoDatabase[friend!.id]!.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -74,10 +91,9 @@ final class FriendCVC: UICollectionViewController {
         guard let currentFriend = friend else { return UICollectionViewCell() }
     
         header.configure(
-            friendName: currentFriend.name,
-            friendAvatar: currentFriend.avatar!,
-            friendAge: currentFriend.age,
-            friendGender: currentFriend.gender.rawValue)
+            friendName: currentFriend.fullName,
+            url: currentFriend.photo,
+            friendGender: (currentFriend.sex == 1) ? "female":"male" )
         
         return header
     }
@@ -89,8 +105,9 @@ final class FriendCVC: UICollectionViewController {
             for: indexPath) as? FriendPage
         else { return UICollectionViewCell() }
         
-        guard let currentFriend = friend else { return UICollectionViewCell() }
-        cell.friendPhotoAlbumItem.image = photoDatabase[currentFriend.id]![indexPath.row].image
+//        guard let currentFriend = friend else { return UICollectionViewCell() }
+        cell.configure(
+            url: photos?[indexPath.row] ?? "")
         
         return cell
     }
@@ -110,7 +127,7 @@ final class FriendCVC: UICollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "showPhoto") as? LargePhoto {
-            vc.photoArray = photoDatabase[friend!.id]!
+            vc.photos = photos!
             vc.chosenPhotoIndex = indexPath.row
             currentIndex = indexPath.row
             vc.friend = friend
@@ -124,6 +141,7 @@ final class FriendCVC: UICollectionViewController {
         chosenPhoto = collectionView.cellForItem(at: chosenIndex) as! FriendPage
 
         enlargedPhoto = UIImageView(image: chosenPhoto.friendPhotoAlbumItem.image)
+        enlargedPhoto.contentMode = .scaleAspectFill
         enlargedPhoto.frame = chosenPhoto.friendPhotoAlbumItem.frame
         enlargedPhoto.layer.position.x = chosenPhoto.frame.midX
         enlargedPhoto.layer.position.y = chosenPhoto.frame.midY + chosenPhoto.frame.size.height/1.33

@@ -34,6 +34,11 @@ class FriendPage: UICollectionViewCell {
             sender.setImage(UIImage(systemName: imageName), for: .normal)
         }
     }
+    
+    func configure (url: String) {
+        self.friendPhotoAlbumItem.downloaded(from: "\(url)")
+        self.friendPhotoAlbumItem.contentMode = .scaleAspectFill
+    }
 }
 
 

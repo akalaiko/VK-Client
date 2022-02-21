@@ -9,8 +9,16 @@ import UIKit
 
 class AllGroupsTVC: UITableViewController {
     @IBOutlet var allGroupsSearch: UISearchBar!
-    var allGroupsFiltered = [GroupModel]()
+    
     private let networkService = NetworkService()
+    private var searchQuery = String()
+    var allGroupsFiltered = [Group]() {
+        didSet {
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,7 +27,7 @@ class AllGroupsTVC: UITableViewController {
             bundle: nil),
             forCellReuseIdentifier: "groupCell")
         
-        allGroupsFiltered = availableGroups
+        allGroupsFiltered.removeAll()
     }
 
     // MARK: - Table view data source
@@ -36,8 +44,8 @@ class AllGroupsTVC: UITableViewController {
         let availableGroup = allGroupsFiltered[indexPath.row]
 
         cell.configure(
-            avatar: availableGroup.avatar,
-            name: availableGroup.name)
+            name: availableGroup.name,
+            url: availableGroup.avatar ?? "")
         
         return cell
     }
@@ -53,16 +61,24 @@ class AllGroupsTVC: UITableViewController {
 }
 
 extension AllGroupsTVC: UISearchBarDelegate {
-    
+
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard !searchText.isEmpty else {
-            allGroupsFiltered = availableGroups
-            tableView.reloadData()
-            return
+
+        searchQuery = searchText
+        allGroupsFiltered.removeAll()
+        
+        networkService.fetchGroupsSearch(searchQuery) { [weak self] result in
+            switch result {
+            case .success(let allGroups):
+                allGroups.items.forEach() { i in
+                    self?.allGroupsFiltered.append(
+                        Group( name: i.name,
+                               avatar: i.avatar))
+                }
+            case .failure(let error):
+                print(error)
+            }
         }
-        allGroupsFiltered = availableGroups.filter({ $0.name.lowercased().contains(searchText.lowercased()) })
-        networkService.fetchGroupsSearch(searchText)
         tableView.reloadData()
     }
-    
 }
