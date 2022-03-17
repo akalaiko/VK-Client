@@ -7,5 +7,6 @@ target 'MyHomeworkApp' do
 
   # Pods for MyHomeworkApp
 pod 'Alamofire'
+pod 'RealmSwift'
 
 end

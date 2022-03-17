@@ -6,7 +6,8 @@
 //
 
 import Foundation
-import Alamofire
+//import Alamofire
+
  
 final class NetworkService {
     

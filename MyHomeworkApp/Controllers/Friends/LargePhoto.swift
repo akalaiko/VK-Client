@@ -6,12 +6,19 @@
 //
 
 import UIKit
+import RealmSwift
 
 class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var photo: UIImageView!
     
-    var friend: User?
-    var photos = [String]()
+    var friend: UserRealm?
+    var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self) {
+        didSet {
+            DispatchQueue.main.async {
+            }
+        }
+    }
+//    var photos = [String]()
     var chosenPhotoIndex = Int()
     var photoSubview = UIImageView()
     
@@ -19,9 +26,12 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        guard let photos = photos else {
+            return
+        }
+
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
-        photo.downloaded(from: photos[chosenPhotoIndex])
+        photo.downloaded(from: photos[chosenPhotoIndex].url)
         photo.isUserInteractionEnabled = true
         photo.contentMode = .scaleAspectFill
         photoSubview.contentMode = .scaleAspectFill
@@ -99,7 +109,7 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
                     }
                 
             } completion: { isCompleted in
-                self.photo.downloaded(from: self.photos[self.chosenPhotoIndex])
+                self.photo.downloaded(from: self.photos![self.chosenPhotoIndex].url)
                 self.photo.alpha = 1
                 self.view.layoutIfNeeded()
             }
@@ -114,7 +124,7 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         switch side {
         case .right:
         photoSubview.center.x = photo.center.x * 2 + photoSubview.frame.size.width / 2
-           if chosenPhotoIndex + 1 < photos.count {
+           if chosenPhotoIndex + 1 < photos!.count {
                chosenPhotoIndex += 1
            } else {
                chosenPhotoIndex = 0
@@ -124,14 +134,14 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
            if chosenPhotoIndex - 1 >= 0 {
                chosenPhotoIndex -= 1
            } else {
-               chosenPhotoIndex = photos.count - 1
+               chosenPhotoIndex = photos!.count - 1
            }
         default:
             break
         }
         
-        photoSubview.downloaded(from: photos[chosenPhotoIndex])
-        title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
+        photoSubview.downloaded(from: photos![chosenPhotoIndex].url)
+        title = "Photo \(chosenPhotoIndex + 1) of \(photos!.count)"
         view.addSubview(photoSubview)
        }
 

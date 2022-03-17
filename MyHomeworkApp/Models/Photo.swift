@@ -44,12 +44,14 @@ extension Albums: Codable {
 struct Photo {
     let height: Int
     let url: String
+    let type: String
 }
 
 extension Photo: Codable {
     enum CodingKeys: String, CodingKey {
         case height
         case url
+        case type
     }
 }
 

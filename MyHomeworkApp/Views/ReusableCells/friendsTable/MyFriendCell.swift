@@ -14,7 +14,7 @@ class MyFriendCell: UITableViewCell {
         AvatarImage.animateAvatar(friendAvatar)
     }
     func configure(name: String, url: String) {
-        self.friendAvatar.downloaded(from: "\(url)")
+        self.friendAvatar.downloaded(from: url)
         self.friendName.text = name
     }
 }

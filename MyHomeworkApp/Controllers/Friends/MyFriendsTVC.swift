@@ -6,38 +6,40 @@
 //
 
 import UIKit
+import RealmSwift
 
 final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     @IBOutlet var searchBar: UISearchBar!
     
-    var friends = [User]() {
+    var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self) {
         didSet {
-            for friend in friends where friend.firstName != "DELETED" {
-                friendsDictionary.removeAll()
-                friends.sort()
-                for index in friends.indices {
-                    let letterKey = String((friends[index].lastName).prefix(1))
-                        if var friendsOnLetterKey = friendsDictionary[letterKey] {
-                            friendsOnLetterKey.append(friends[index])
-                            friendsDictionary[letterKey] = friendsOnLetterKey
-                        } else {
-                            friendsDictionary[letterKey] = [friends[index]]
-                        }
+            guard let friends = friends
+            else { return }
+                for friend in friends where friend.firstName != "DELETED" {
+                    friendsDictionary.removeAll()
+                    for index in friends.indices {
+                        let letterKey = String((friends[index].lastName).prefix(1))
+                            if var friendsOnLetterKey = friendsDictionary[letterKey] {
+                                friendsOnLetterKey.append(friends[index])
+                                friendsDictionary[letterKey] = friendsOnLetterKey
+                            } else {
+                                friendsDictionary[letterKey] = [friends[index]]
+                            }
+                    }
+
+                    friendsSectionTitles = [String](friendsDictionary.keys).sorted(by: { $0 < $1 })
                 }
+                DispatchQueue.main.async {
 
-                friendsSectionTitles = [String](friendsDictionary.keys).sorted(by: { $0 < $1 })
-            }
-            DispatchQueue.main.async {
-
-                self.friendsFilteredDictionary = self.friendsDictionary
-                self.tableView.reloadData()
-            }
+                    self.friendsFilteredDictionary = self.friendsDictionary
+                    self.tableView.reloadData()
+                }
         }
     }
     
-    var friendsDictionary = [String: [User]]()
+    var friendsDictionary = [String: [UserRealm]]()
     var friendsSectionTitles = [String]()
-    var friendsFilteredDictionary = [String: [User]]()
+    var friendsFilteredDictionary = [String: [UserRealm]]()
     private let networkService = NetworkService()
 
     override func viewDidLoad() {
@@ -51,7 +53,17 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         networkService.fetchFriends() { [weak self] result in
             switch result {
             case .success(let responseFriends):
-                self?.friends = responseFriends.items
+                let items = responseFriends.items.map {
+                    UserRealm(user: $0)
+                }
+                DispatchQueue.main.async {
+                    do {
+                        try RealmService.save(items: items)
+                        self?.friends = try RealmService.load(typeOf: UserRealm.self)
+                    } catch {
+                        print(error)
+                    }
+                }
             case .failure(let error):
                 print(error)
             }
@@ -85,7 +97,6 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as? MyFriendCell else { return UITableViewCell() }
-//        cell.friendAvatar.image = nil
         let letterKey = friendsSectionTitles[indexPath.section]
            if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
                let myFriend = friendsOnLetterKey[indexPath.row]
@@ -105,7 +116,15 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         guard let destination = segue.destination as? FriendCVC else { return }
         let letterKey = friendsSectionTitles[indexPath.section]
            if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
-               destination.friend = friendsOnLetterKey[indexPath.row]}
+               destination.friend = friendsOnLetterKey[indexPath.row]
+           }
+        DispatchQueue.main.async {
+            do {
+                try RealmService.delete(object: destination.photos!)
+            } catch {
+                print(error)
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -116,6 +135,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         true
     }
+
 }
 
 // search

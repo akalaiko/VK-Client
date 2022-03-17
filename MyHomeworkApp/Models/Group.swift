@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct Group {
     
@@ -23,6 +24,42 @@ extension Group: Equatable {
     
     static func ==(lhs: Group, rhs: Group) -> Bool {
         return lhs.name == rhs.name
+    }
+}
+
+struct GroupsResponse {
+    let response: Groups
+}
+
+extension GroupsResponse: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case response
+    }
+}
+    
+struct Groups {
+    let count: Int
+    let items: [GroupData]
+}
+
+extension Groups: Codable {
+    enum CodingKeys: String, CodingKey {
+        case count
+        case items
+    }
+}
+
+struct GroupData {
+    let id: Int
+    let name: String
+    let avatar: String
+}
+
+extension GroupData: Codable {
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case avatar = "photo_100"
     }
 }
 

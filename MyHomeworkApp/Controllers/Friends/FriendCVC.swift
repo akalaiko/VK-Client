@@ -6,23 +6,25 @@
 //
 
 import UIKit
+import RealmSwift
 
 final class FriendCVC: UICollectionViewController {
     
-    var friend: User?
+    var friend: UserRealm?
     var viewForSmooth = UIView()
     var currentIndex = Int()
     static var freakingIndex = Int()
     var chosenPhoto = FriendPage()
     var enlargedPhoto = UIImageView()
     private let networkService = NetworkService()
-    var photos: [String]? = [] {
+    var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self) {
         didSet {
             DispatchQueue.main.async {
                 self.collectionView.reloadData()
             }
         }
     }
+    var photoURLs: [String]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,19 +50,35 @@ final class FriendCVC: UICollectionViewController {
         networkService.fetchPhotos(id: "\(friend!.id)"){ [weak self] result in
             switch result {
             case .success(let photos):
-                photos.items.forEach { i in
-                    self?.photos?.append(i.sizes.last!.url)
+                
+                let items = photos.items.map { i -> PhotoRealm in
+                    self?.photoURLs?.append(i.sizes.last?.url ?? "")
+                    let value = i.sizes.last { i in
+                        i.type == "z"
+                    }
+                    let elem = PhotoRealm(photo: Photo(
+                        height: value?.height ?? 0,
+                        url: value?.url ?? "",
+                        type: value?.type ?? ""))
+                    return elem
+                }
+                DispatchQueue.main.async {
+                    do {
+                        try RealmService.save(items: items)
+                        self?.photos = try RealmService.load(typeOf: PhotoRealm.self)
+                    } catch {
+                        print(error)
+                    }
                 }
             case .failure(let error):
                 print(error)
             }
         }
-        
     }
     
     override func viewWillAppear(_ animated: Bool = false) {
         if CGFloat(viewForSmooth.alpha).rounded(.up) == 1 {
-            enlargedPhoto.downloaded(from: photos![FriendCVC.freakingIndex])
+            enlargedPhoto.downloaded(from: photos![FriendCVC.freakingIndex].url)
             viewForSmooth.alpha = 1.0
             postAnimation([0, FriendCVC.freakingIndex])
         }
@@ -77,7 +95,6 @@ final class FriendCVC: UICollectionViewController {
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         photos?.count ?? 0
-//        photoDatabase[friend!.id]!.count
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -104,10 +121,8 @@ final class FriendCVC: UICollectionViewController {
             withReuseIdentifier: "friendPageCell",
             for: indexPath) as? FriendPage
         else { return UICollectionViewCell() }
-        
-//        guard let currentFriend = friend else { return UICollectionViewCell() }
         cell.configure(
-            url: photos?[indexPath.row] ?? "")
+            url: photos?[indexPath.row].url ?? "")
         
         return cell
     }
