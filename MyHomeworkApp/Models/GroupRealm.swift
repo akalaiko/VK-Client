@@ -9,7 +9,7 @@ import Foundation
 import RealmSwift
 
 class GroupRealm: Object {
-    @Persisted(primaryKey: true) var id: Int = 0
+    @Persisted(primaryKey: true) var id = Int()
     @Persisted var name: String = ""
     @Persisted var avatar: String = ""
 }

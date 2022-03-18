@@ -13,6 +13,8 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     
     var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self) {
         didSet {
+            DispatchQueue.main.async { [self] in
+            
             guard let friends = friends
             else { return }
                 for friend in friends where friend.firstName != "DELETED" {
@@ -26,14 +28,11 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
                                 friendsDictionary[letterKey] = [friends[index]]
                             }
                     }
-
                     friendsSectionTitles = [String](friendsDictionary.keys).sorted(by: { $0 < $1 })
                 }
-                DispatchQueue.main.async {
-
-                    self.friendsFilteredDictionary = self.friendsDictionary
-                    self.tableView.reloadData()
-                }
+                self.friendsFilteredDictionary = self.friendsDictionary
+                self.tableView.reloadData()
+            }
         }
     }
     
@@ -70,7 +69,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         }
     }
 
-    // MARK: - Table view data source
+// MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         friendsSectionTitles.count
@@ -84,7 +83,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         return friendsSectionTitles
     }
     
-    // header & cell configure
+// header & cell configure
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return friendsSectionTitles[section]
@@ -109,7 +108,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         return cell
     }
     
-    // select & segue
+// select & segue
     
     override func prepare( for segue: UIStoryboardSegue, sender: Any? ) {
         guard segue.identifier == "goToFriend", let indexPath = tableView.indexPathForSelectedRow else { return }
@@ -118,13 +117,6 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
            if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
                destination.friend = friendsOnLetterKey[indexPath.row]
            }
-        DispatchQueue.main.async {
-            do {
-                try RealmService.delete(object: destination.photos!)
-            } catch {
-                print(error)
-            }
-        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

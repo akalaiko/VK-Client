@@ -32,12 +32,14 @@ extension Photos: Codable {
 struct Albums {
     let sizes: [Photo]
     let likes: Likes
+    let ownerID: Int
 }
 
 extension Albums: Codable {
     enum CodingKeys: String, CodingKey {
         case sizes
         case likes
+        case ownerID = "owner_id"
     }
 }
 

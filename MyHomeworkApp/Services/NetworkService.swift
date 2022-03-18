@@ -115,11 +115,11 @@ final class NetworkService {
         task.resume()
     }
     
-    func fetchPhotos(id: String, completion: @escaping (Result<Photos,Error>) -> Void) {
+    func fetchPhotos(id: Int, completion: @escaping (Result<Photos,Error>) -> Void) {
         var constructor = urlConstructor
         constructor.path = "/method/photos.get"
         constructor.queryItems = [
-            URLQueryItem(name: "owner_id", value: id),
+            URLQueryItem(name: "owner_id", value: "\(id)"),
             URLQueryItem(name: "album_id", value: "profile"),
             URLQueryItem(name: "rev", value: "1"),
             URLQueryItem(name: "photo_sizes", value: "0"),

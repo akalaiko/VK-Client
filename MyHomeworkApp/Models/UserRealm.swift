@@ -28,3 +28,7 @@ extension UserRealm {
         self.fullName = user.fullName
     }
 }
+
+extension UserRealm: Comparable {
+        static func < (lhs: UserRealm, rhs: UserRealm) -> Bool { lhs.lastName < rhs.lastName }
+}

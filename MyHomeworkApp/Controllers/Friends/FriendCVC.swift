@@ -24,7 +24,6 @@ final class FriendCVC: UICollectionViewController {
             }
         }
     }
-    var photoURLs: [String]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,25 +46,15 @@ final class FriendCVC: UICollectionViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "friendHeader")
         
-        networkService.fetchPhotos(id: "\(friend!.id)"){ [weak self] result in
+        networkService.fetchPhotos(id: friend!.id){ [weak self] result in
             switch result {
             case .success(let photos):
-                
-                let items = photos.items.map { i -> PhotoRealm in
-                    self?.photoURLs?.append(i.sizes.last?.url ?? "")
-                    let value = i.sizes.last { i in
-                        i.type == "z"
-                    }
-                    let elem = PhotoRealm(photo: Photo(
-                        height: value?.height ?? 0,
-                        url: value?.url ?? "",
-                        type: value?.type ?? ""))
-                    return elem
-                }
                 DispatchQueue.main.async {
+                    let photoRealm = photos.items.map { PhotoRealm(ownerID: self?.friend?.id ?? 0, photo: $0) }
                     do {
-                        try RealmService.save(items: items)
-                        self?.photos = try RealmService.load(typeOf: PhotoRealm.self)
+                    try RealmService.save(items: photoRealm)
+                        self?.photos = try RealmService.load(typeOf: PhotoRealm.self).filter("ownerID == %@", self?.friend?.id ?? "")
+                    self?.collectionView.reloadData()
                     } catch {
                         print(error)
                     }
@@ -83,19 +72,12 @@ final class FriendCVC: UICollectionViewController {
             postAnimation([0, FriendCVC.freakingIndex])
         }
     }
-    override func viewDidAppear(_ animated: Bool = false) {
-       
-    }
 
     // MARK: UICollectionViewDataSource
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        1
-    }
+    override func numberOfSections(in collectionView: UICollectionView) -> Int { 1 }
 
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        photos?.count ?? 0
-    }
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { photos?.count ?? 0 }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         

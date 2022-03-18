@@ -9,14 +9,14 @@ import Foundation
 import RealmSwift
 
 class PhotoRealm: Object {
+    @Persisted(indexed: true) var ownerID: Int = Int()
     @Persisted(primaryKey: true) var url: String = ""
-    @Persisted var height: Int = 0
 }
 
 extension PhotoRealm {
-    convenience init (photo: Photo) {
+    convenience init(ownerID: Int, photo: Albums) {
         self.init()
-        self.url = photo.url
-        self.height = photo.height
+        self.ownerID = ownerID
+        self.url = photo.sizes.last!.url
     }
 }
