@@ -16,17 +16,6 @@ final class MyGroupsTVC: UITableViewController {
     var groupsFiltered = [GroupRealm]()
     private let networkService = NetworkService()
     var userGroups: Results<GroupRealm>? = try? RealmService.load(typeOf: GroupRealm.self)
-    {
-        didSet {
-            DispatchQueue.main.async { [self] in
-                guard let userGroups = userGroups else { return }
-                for group in userGroups {
-                    groupsFiltered.append(group)
-                    self.tableView.reloadData()
-                }
-            }
-        }
-    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -44,7 +33,6 @@ final class MyGroupsTVC: UITableViewController {
                     do {
                         try RealmService.save(items: realmGroup)
                         self?.userGroups = try RealmService.load(typeOf: GroupRealm.self)
-                        self?.tableView.reloadData()
                     } catch {
                         print(error)
                     }
@@ -53,6 +41,7 @@ final class MyGroupsTVC: UITableViewController {
                 print(error)
             }
         }
+        sortGroups()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -60,30 +49,8 @@ final class MyGroupsTVC: UITableViewController {
         groupsToken = userGroups?.observe { [weak self] groupsChanges in
             guard let self = self else { return }
             switch groupsChanges {
-            case .initial(_):
-                self.tableView.reloadData()
-            case let .update(
-                _,
-                deletions: deletions,
-                insertions: insertions,
-                modifications: modifications):
-                self.tableView.beginUpdates()
-                
-                let delRowsIndex = deletions.map { IndexPath(
-                    row: $0,
-                    section: 0) }
-                let insertRowsIndex = insertions.map { IndexPath(
-                    row: $0,
-                    section: 0)}
-                let modificationIndex = modifications.map { IndexPath(
-                    row: $0,
-                    section: 0)}
-                
-                self.tableView.deleteRows(at: delRowsIndex, with: .automatic)
-                self.tableView.insertRows(at: insertRowsIndex, with: .automatic)
-                self.tableView.reloadRows(at: modificationIndex, with: .automatic)
-                
-                self.tableView.endUpdates()
+            case .initial, .update:
+                self.sortGroups()
             case .error(let error):
                 print(error)
             }
@@ -127,26 +94,33 @@ final class MyGroupsTVC: UITableViewController {
        
         return cell
     }
+    
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            let removeGroup = groupsFiltered.remove(at: indexPath.row)
+                    try? RealmService.delete(object: removeGroup)
+        }
+    }
+    
+    func sortGroups() {
+        guard let userGroups = userGroups else { return }
+        self.groupsFiltered.removeAll()
+        for group in userGroups {
+            groupsFiltered.append(group)
+            self.tableView.reloadData()
+        }
+    }
 }
 
 extension MyGroupsTVC: UISearchBarDelegate {
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         guard !searchText.isEmpty else {
-            groupsFiltered.removeAll()
-            guard let userGroups = userGroups else {
-                return
-            }
-            for group in userGroups where group.name != "DELETED" {
-                groupsFiltered.append(group)
-            }
-            tableView.reloadData()
+            sortGroups()
             return
         }
 
-        guard let userGroups = userGroups else {
-            return
-        }
+        guard let userGroups = userGroups else { return }
         groupsFiltered.removeAll()
         for group in userGroups where group.name.lowercased().contains(searchText.lowercased()) {
             groupsFiltered.append(group)

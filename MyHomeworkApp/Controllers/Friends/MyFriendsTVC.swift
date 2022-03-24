@@ -16,7 +16,6 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     var friendsFilteredDictionary = [String: [UserRealm]]()
     private let networkService = NetworkService()
     private var friendsToken: NotificationToken?
-    
     var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self)
 
     override func viewDidLoad() {
@@ -26,14 +25,11 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
             nibName: "MyFriendCell",
             bundle: nil),
             forCellReuseIdentifier: "friendCell")
-//         try? RealmService.clear()
+        
         networkService.fetchFriends() { [weak self] result in
             switch result {
             case .success(let responseFriends):
-                let items = responseFriends.items.map {
-                    UserRealm(user: $0)
-                }
-                print(items.count)
+                let items = responseFriends.items.map { UserRealm(user: $0) }
                 DispatchQueue.main.async {
                     do {
                         try RealmService.save(items: items)
@@ -54,12 +50,8 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         friendsToken = friends?.observe { [weak self] friendsChanges in
             guard let self = self else { return }
             switch friendsChanges {
-            case .initial(_), .update(
-                        _,
-                        deletions: _,
-                        insertions: _,
-                        modifications: _):
-                self.tableView.reloadData()
+            case .initial, .update:
+                self.sortFriends()
             case .error(let error):
                 print(error)
             }
@@ -102,7 +94,6 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
            if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
                let myFriend = friendsOnLetterKey[indexPath.row]
 
-               
                cell.configure(
                    name: myFriend.fullName,
                    url: myFriend.photo)
@@ -115,6 +106,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         else { return }
             for friend in friends where friend.firstName != "DELETED" {
                 friendsDictionary.removeAll()
+                
                 for index in friends.indices {
                     let letterKey = String((friends[index].lastName).prefix(1))
                         if var friendsOnLetterKey = friendsDictionary[letterKey] {
