@@ -24,6 +24,7 @@ final class FriendCVC: UICollectionViewController {
             }
         }
     }
+    var photosToken: NotificationToken?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,6 +72,43 @@ final class FriendCVC: UICollectionViewController {
             viewForSmooth.alpha = 1.0
             postAnimation([0, FriendCVC.freakingIndex])
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        photosToken = photos?.observe { [weak self] photosChanges in
+            guard let self = self else { return }
+            switch photosChanges {
+            case .initial(_):
+                self.collectionView.reloadData()
+            case let .update(
+                _,
+                deletions: deletions,
+                insertions: insertions,
+                modifications: modifications):
+                
+                let delRowsIndex = deletions.map { IndexPath(
+                    row: $0,
+                    section: 0) }
+                let insertRowsIndex = insertions.map { IndexPath(
+                    row: $0,
+                    section: 0)}
+                let modificationIndex = modifications.map { IndexPath(
+                    row: $0,
+                    section: 0)}
+                
+                self.collectionView.deleteItems(at: delRowsIndex)
+                self.collectionView.insertItems(at: insertRowsIndex)
+                self.collectionView.reloadItems(at: modificationIndex)
+            case .error(let error):
+                print(error)
+            }
+        }
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        photosToken?.invalidate()
     }
 
     // MARK: UICollectionViewDataSource

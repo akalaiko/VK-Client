@@ -11,35 +11,13 @@ import RealmSwift
 final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     @IBOutlet var searchBar: UISearchBar!
     
-    var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self) {
-        didSet {
-            DispatchQueue.main.async { [self] in
-            
-            guard let friends = friends
-            else { return }
-                for friend in friends where friend.firstName != "DELETED" {
-                    friendsDictionary.removeAll()
-                    for index in friends.indices {
-                        let letterKey = String((friends[index].lastName).prefix(1))
-                            if var friendsOnLetterKey = friendsDictionary[letterKey] {
-                                friendsOnLetterKey.append(friends[index])
-                                friendsDictionary[letterKey] = friendsOnLetterKey
-                            } else {
-                                friendsDictionary[letterKey] = [friends[index]]
-                            }
-                    }
-                    friendsSectionTitles = [String](friendsDictionary.keys).sorted(by: { $0 < $1 })
-                }
-                self.friendsFilteredDictionary = self.friendsDictionary
-                self.tableView.reloadData()
-            }
-        }
-    }
-    
     var friendsDictionary = [String: [UserRealm]]()
     var friendsSectionTitles = [String]()
     var friendsFilteredDictionary = [String: [UserRealm]]()
     private let networkService = NetworkService()
+    private var friendsToken: NotificationToken?
+    
+    var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -48,13 +26,14 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
             nibName: "MyFriendCell",
             bundle: nil),
             forCellReuseIdentifier: "friendCell")
-        
+//         try? RealmService.clear()
         networkService.fetchFriends() { [weak self] result in
             switch result {
             case .success(let responseFriends):
                 let items = responseFriends.items.map {
                     UserRealm(user: $0)
                 }
+                print(items.count)
                 DispatchQueue.main.async {
                     do {
                         try RealmService.save(items: items)
@@ -67,12 +46,35 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
                 print(error)
             }
         }
+        sortFriends()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        friendsToken = friends?.observe { [weak self] friendsChanges in
+            guard let self = self else { return }
+            switch friendsChanges {
+            case .initial(_), .update(
+                        _,
+                        deletions: _,
+                        insertions: _,
+                        modifications: _):
+                self.tableView.reloadData()
+            case .error(let error):
+                print(error)
+            }
+        }
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        friendsToken?.invalidate()
     }
 
 // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        friendsSectionTitles.count
+        friendsSectionTitles.count 
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -108,6 +110,25 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         return cell
     }
     
+    func sortFriends() {
+        guard let friends = friends
+        else { return }
+            for friend in friends where friend.firstName != "DELETED" {
+                friendsDictionary.removeAll()
+                for index in friends.indices {
+                    let letterKey = String((friends[index].lastName).prefix(1))
+                        if var friendsOnLetterKey = friendsDictionary[letterKey] {
+                            friendsOnLetterKey.append(friends[index])
+                            friendsDictionary[letterKey] = friendsOnLetterKey
+                        } else {
+                            friendsDictionary[letterKey] = [friends[index]]
+                        }
+                }
+                friendsSectionTitles = [String](friendsDictionary.keys).sorted(by: { $0 < $1 })
+            }
+            self.friendsFilteredDictionary = self.friendsDictionary
+            self.tableView.reloadData()
+    }
 // select & segue
     
     override func prepare( for segue: UIStoryboardSegue, sender: Any? ) {
