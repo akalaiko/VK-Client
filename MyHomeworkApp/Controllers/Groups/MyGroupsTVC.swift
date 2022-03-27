@@ -13,9 +13,9 @@ final class MyGroupsTVC: UITableViewController {
     @IBOutlet var myGroupsSearch: UISearchBar!
     
     private var groupsToken: NotificationToken?
-    var groupsFiltered = [GroupRealm]()
+    private var groupsFiltered = [GroupRealm]()
     private let networkService = NetworkService()
-    var userGroups: Results<GroupRealm>? = try? RealmService.load(typeOf: GroupRealm.self)
+    private var userGroups: Results<GroupRealm>? = try? RealmService.load(typeOf: GroupRealm.self)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,19 +62,19 @@ final class MyGroupsTVC: UITableViewController {
         groupsToken?.invalidate()
     }
     
-//    @IBAction func addGroup(segue: UIStoryboardSegue) {
-//        guard
-//            segue.identifier == "addGroup",
-//            let allGroupsController = segue.source as? AllGroupsTVC,
-//            let groupIndexPath = allGroupsController.tableView.indexPathForSelectedRow
-//        else { return }
-//        let group = allGroupsController.allGroupsFiltered[groupIndexPath.row]
-//        print(groupIndexPath)
-//        print(group)
-////        userGroups.append(availableGroups.remove(at: availableGroups.firstIndex(of: group)!))
-//        groupsFiltered = userGroups
-//        tableView.reloadData()
-//    }
+    @IBAction func addGroup(segue: UIStoryboardSegue) {
+        guard
+            segue.identifier == "addGroup",
+            let allGroupsController = segue.source as? AllGroupsTVC,
+            let groupIndexPath = allGroupsController.tableView.indexPathForSelectedRow
+        else { return }
+        let group = allGroupsController.allGroupsFiltered[groupIndexPath.row]
+        guard let existingGroup = userGroups?.filter("id == %@", group.id),
+              existingGroup.isEmpty
+        else { return }
+        let groupToRealm = GroupRealm(group: GroupData(id: group.id, name: group.name, avatar: group.avatar ?? ""))
+        try? RealmService.add(item: groupToRealm)
+    }
 
     // MARK: - Table view data source
 

@@ -27,8 +27,7 @@ class LoginViewController: UIViewController {
         subview.center.x = view.center.x - 50
         subview.center.y = 500.0
         view.addSubview(subview)
-        scrollView
-            .addGestureRecognizer(
+        scrollView.addGestureRecognizer(
                 UITapGestureRecognizer(
                     target: self,
                     action: #selector(hideKeyboard)))
@@ -36,13 +35,11 @@ class LoginViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        NotificationCenter.default.addObserver(
-            self,
+        NotificationCenter.default.addObserver( self,
             selector: #selector(self.keyboardWasShown),
             name: UIResponder.keyboardWillShowNotification,
             object: nil)
-        NotificationCenter.default.addObserver(
-            self,
+        NotificationCenter.default.addObserver( self,
             selector: #selector(self.keyboardWillBeHidden(notification:)),
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
@@ -50,12 +47,10 @@ class LoginViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        NotificationCenter.default.removeObserver(
-            self,
+        NotificationCenter.default.removeObserver( self,
             name: UIResponder.keyboardWillShowNotification,
             object: nil)
-        NotificationCenter.default.removeObserver(
-            self,
+        NotificationCenter.default.removeObserver( self,
             name: UIResponder.keyboardWillHideNotification,
             object: nil)
     }
@@ -172,7 +167,7 @@ class LoginViewController: UIViewController {
         
     }
     
-    func animateCloud() {
+    private func animateCloud() {
         let cloudLayer = CAShapeLayer()
         cloudLayer.path = UIBezierPath.cloud().cgPath
         cloudLayer.lineWidth = 2.0

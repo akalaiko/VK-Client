@@ -10,6 +10,7 @@ import UIKit
 class AllGroupsTVC: UITableViewController {
     @IBOutlet var allGroupsSearch: UISearchBar!
     
+    private var timer = Timer()
     private let networkService = NetworkService()
     private var searchQuery = String()
     var allGroupsFiltered = [Group]() {
@@ -26,8 +27,6 @@ class AllGroupsTVC: UITableViewController {
             nibName: "MyGroupsCell",
             bundle: nil),
             forCellReuseIdentifier: "groupCell")
-        
-        allGroupsFiltered.removeAll()
     }
 
     // MARK: - Table view data source
@@ -67,18 +66,21 @@ extension AllGroupsTVC: UISearchBarDelegate {
         searchQuery = searchText
         allGroupsFiltered.removeAll()
         
-        networkService.fetchGroupsSearch(searchQuery) { [weak self] result in
-            switch result {
-            case .success(let allGroups):
-                allGroups.items.forEach() { i in
-                    self?.allGroupsFiltered.append(
-                        Group( name: i.name,
-                               avatar: i.avatar))
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [self] _ in
+                networkService.fetchGroupsSearch(searchQuery) { [weak self] result in
+                    switch result {
+                    case .success(let allGroups):
+                        allGroups.items.forEach() { i in
+                            self?.allGroupsFiltered.append(
+                                Group( id: i.id,
+                                       name: i.name,
+                                       avatar: i.avatar))
+                        }
+                    case .failure(let error):
+                        print(error)
+                    }
                 }
-            case .failure(let error):
-                print(error)
             }
-        }
-        tableView.reloadData()
+        )
     }
 }

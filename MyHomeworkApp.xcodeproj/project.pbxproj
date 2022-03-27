@@ -152,9 +152,7 @@
 				AF7327EF27C145B5004FFB80 /* Group.swift */,
 				AFE0BED82798501700068B94 /* newsModel.swift */,
 				AF7538C627B7376A006A2E63 /* Singleton.swift */,
-				AF5B421727DF805E00865EF0 /* UserRealm.swift */,
-				AF5B421B27DF80EA00865EF0 /* GroupRealm.swift */,
-				AF5B421927DF807600865EF0 /* PhotoRealm.swift */,
+				AFD54BF927F0854F002A8CC2 /* Realm */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -286,9 +284,9 @@
 			children = (
 				AFB7577B276A300100376A38 /* LoginViewController.swift */,
 				AF73544427BCFD9400A22411 /* VKlogin.swift */,
-				AFE0BEEB2798D48800068B94 /* NewsTVC.swift */,
 				AF47891127A80FE8005FBD6F /* Friends */,
 				AF47891027A80FD5005FBD6F /* Groups */,
+				AFE0BEEB2798D48800068B94 /* NewsTVC.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -300,6 +298,16 @@
 				AF3FA8F6277217AB009A7E05 /* ReusableCells */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		AFD54BF927F0854F002A8CC2 /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				AF5B421727DF805E00865EF0 /* UserRealm.swift */,
+				AF5B421B27DF80EA00865EF0 /* GroupRealm.swift */,
+				AF5B421927DF807600865EF0 /* PhotoRealm.swift */,
+			);
+			path = Realm;
 			sourceTree = "<group>";
 		};
 		AFE0BED727975EF000068B94 /* Header */ = {

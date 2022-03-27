@@ -32,7 +32,6 @@ struct NewsModel {
         self.commentCounter = commentCounter ?? 0
         self.shareCounter = shareCounter ?? 0
     }
-    
 }
 
 var newsFeed: [NewsModel] = [

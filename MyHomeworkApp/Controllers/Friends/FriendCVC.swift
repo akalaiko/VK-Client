@@ -11,20 +11,14 @@ import RealmSwift
 final class FriendCVC: UICollectionViewController {
     
     var friend: UserRealm?
-    var viewForSmooth = UIView()
-    var currentIndex = Int()
+    private var viewForSmooth = UIView()
+    private var currentIndex = Int()
     static var freakingIndex = Int()
-    var chosenPhoto = FriendPage()
-    var enlargedPhoto = UIImageView()
+    private var chosenPhoto = FriendPage()
+    private var enlargedPhoto = UIImageView()
     private let networkService = NetworkService()
-    var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self) {
-        didSet {
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-        }
-    }
-    var photosToken: NotificationToken?
+    private var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
+    private var photosToken: NotificationToken?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,23 +41,7 @@ final class FriendCVC: UICollectionViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "friendHeader")
         
-        networkService.fetchPhotos(id: friend!.id){ [weak self] result in
-            switch result {
-            case .success(let photos):
-                DispatchQueue.main.async {
-                    let photoRealm = photos.items.map { PhotoRealm(ownerID: self?.friend?.id ?? 0, photo: $0) }
-                    do {
-                    try RealmService.save(items: photoRealm)
-                        self?.photos = try RealmService.load(typeOf: PhotoRealm.self).filter("ownerID == %@", self?.friend?.id ?? "")
-                    self?.collectionView.reloadData()
-                    } catch {
-                        print(error)
-                    }
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
+        networkServiceFunction()
     }
     
     override func viewWillAppear(_ animated: Bool = false) {
@@ -262,5 +240,25 @@ final class FriendCVC: UICollectionViewController {
                 self.viewForSmooth.removeFromSuperview()
                 self.enlargedPhoto.removeFromSuperview()
             })
+    }
+    
+    func networkServiceFunction() {
+        networkService.fetchPhotos(id: friend!.id){ [weak self] result in
+            switch result {
+            case .success(let photos):
+                DispatchQueue.main.async {
+                    let photoRealm = photos.items.map { PhotoRealm(ownerID: self?.friend?.id ?? 0, photo: $0) }
+                    do {
+                    try RealmService.save(items: photoRealm)
+                        self?.photos = try RealmService.load(typeOf: PhotoRealm.self).filter("ownerID == %@", self?.friend?.id ?? "")
+                    self?.collectionView.reloadData()
+                    } catch {
+                        print(error)
+                    }
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
     }
 }

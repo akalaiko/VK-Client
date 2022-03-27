@@ -6,12 +6,11 @@
 //
 
 import Foundation
-//import Alamofire
 
- 
 final class NetworkService {
     
     lazy var mySession = URLSession(configuration: configuration)
+    
     let configuration: URLSessionConfiguration = {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForRequest = 10.0
@@ -24,7 +23,6 @@ final class NetworkService {
         constructor.host = "api.vk.com"
         return constructor
     }()
-    
     
     func fetchFriends(completion: @escaping (Result<Friends, Error>) -> Void) {
         var constructor = urlConstructor
@@ -84,7 +82,6 @@ final class NetworkService {
         task.resume()
     }
         
-    
     func fetchGroupsSearch(_ q: String, completion: @escaping (Result<Groups, Error>) -> Void) {
         var constructor = urlConstructor
         constructor.path = "/method/groups.search"
@@ -144,23 +141,5 @@ final class NetworkService {
             }
         }
         task.resume()
-//        performTask(url)
     }
-
-//    func performTask(_ url: URL) {
-//        let task = mySession.dataTask(with: url) { data, response, error in
-//            if let response = response as? HTTPURLResponse {
-//                print(response.statusCode)
-//            }
-//            guard
-//                error == nil,
-//                let data = data
-//            else { return }
-//            let json = try? JSONSerialization.jsonObject(
-//                with: data,
-//                options: .allowFragments)
-//            print(json)
-//        }
-//        task.resume()
-//    }
 }

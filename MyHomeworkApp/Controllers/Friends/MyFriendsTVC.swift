@@ -11,12 +11,12 @@ import RealmSwift
 final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     @IBOutlet var searchBar: UISearchBar!
     
-    var friendsDictionary = [String: [UserRealm]]()
-    var friendsSectionTitles = [String]()
-    var friendsFilteredDictionary = [String: [UserRealm]]()
+    private var friendsDictionary = [String: [UserRealm]]()
+    private var friendsSectionTitles = [String]()
+    private var friendsFilteredDictionary = [String: [UserRealm]]()
     private let networkService = NetworkService()
+    private var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self)
     private var friendsToken: NotificationToken?
-    var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,22 +26,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
             bundle: nil),
             forCellReuseIdentifier: "friendCell")
         
-        networkService.fetchFriends() { [weak self] result in
-            switch result {
-            case .success(let responseFriends):
-                let items = responseFriends.items.map { UserRealm(user: $0) }
-                DispatchQueue.main.async {
-                    do {
-                        try RealmService.save(items: items)
-                        self?.friends = try RealmService.load(typeOf: UserRealm.self)
-                    } catch {
-                        print(error)
-                    }
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
+        networkServiceFunction()
         sortFriends()
     }
     
@@ -101,6 +86,25 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         return cell
     }
     
+    func networkServiceFunction() {
+        networkService.fetchFriends() { [weak self] result in
+            switch result {
+            case .success(let responseFriends):
+                let items = responseFriends.items.map { UserRealm(user: $0) }
+                DispatchQueue.main.async {
+                    do {
+                        try RealmService.save(items: items)
+                        self?.friends = try RealmService.load(typeOf: UserRealm.self)
+                    } catch {
+                        print(error)
+                    }
+                }
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+    
     func sortFriends() {
         guard let friends = friends
         else { return }
@@ -135,10 +139,6 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer { tableView.deselectRow(at: indexPath, animated: true)}
         performSegue(withIdentifier: "goToFriend", sender: nil)
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        true
     }
 
 }

@@ -12,23 +12,13 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     @IBOutlet var photo: UIImageView!
     
     var friend: UserRealm?
-    var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self) {
-        didSet {
-            DispatchQueue.main.async {
-            }
-        }
-    }
-//    var photos = [String]()
+    var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
     var chosenPhotoIndex = Int()
-    var photoSubview = UIImageView()
-    
-    
+    private var photoSubview = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let photos = photos else {
-            return
-        }
+        guard let photos = photos else { return}
 
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
         photo.downloaded(from: photos[chosenPhotoIndex].url)
@@ -36,8 +26,6 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         photo.contentMode = .scaleAspectFill
         photoSubview.contentMode = .scaleAspectFill
 
-
-        
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
             swipeRight.direction = .right
             view.addGestureRecognizer(swipeRight)
@@ -49,14 +37,12 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
             swipeDown.direction = .down
             view.addGestureRecognizer(swipeDown)
-
     }
     
     override func viewWillDisappear(_ animated: Bool = false) {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "friendCVC") as? FriendCVC {
             vc.friend = friend
             FriendCVC.freakingIndex = chosenPhotoIndex
-            
         }
     }
     
@@ -113,7 +99,6 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
                 self.photo.alpha = 1
                 self.view.layoutIfNeeded()
             }
-        
     }
     
     func setupSubview(on side: UISwipeGestureRecognizer.Direction) {
