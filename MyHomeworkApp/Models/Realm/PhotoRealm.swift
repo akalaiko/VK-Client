@@ -11,7 +11,6 @@ import RealmSwift
 class PhotoRealm: Object {
     @Persisted(indexed: true) var ownerID: Int = Int()
     @Persisted(primaryKey: true) var url: String = ""
-    @Persisted(indexed: true) var urlSmall: String = ""
 }
 
 extension PhotoRealm {
@@ -19,6 +18,5 @@ extension PhotoRealm {
         self.init()
         self.ownerID = ownerID
         self.url = photo.sizes.last!.url
-        self.urlSmall = photo.sizes.first!.url
     }
 }

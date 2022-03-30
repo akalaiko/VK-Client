@@ -21,6 +21,8 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         searchBar.delegate = self
+        tableView.sectionHeaderTopPadding = 0
+        
         tableView.register(UINib(
             nibName: "MyFriendCell",
             bundle: nil),
@@ -70,7 +72,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     
     override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header = view as? UITableViewHeaderFooterView
-        header?.tintColor = UIColor.gray.withAlphaComponent(0.15)
+        header?.tintColor = UIColor.gray.withAlphaComponent(0.05)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -90,7 +92,6 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         networkService.fetch(type: .friends) { [weak self] result in
             switch result {
             case .success(let responseFriends):
-                DispatchQueue.main.async {
                     let items = responseFriends.map { UserRealm(user: $0) }
                     do {
                         try RealmService.save(items: items)
@@ -98,7 +99,6 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
                     } catch {
                         print(error)
                     }
-                }
             case .failure(let error):
                 print(error)
             }

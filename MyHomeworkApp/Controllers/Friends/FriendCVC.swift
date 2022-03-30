@@ -119,8 +119,7 @@ final class FriendCVC: UICollectionViewController {
             for: indexPath) as? FriendPage
         else { return UICollectionViewCell() }
         cell.configure(
-            url: photos?[indexPath.row].url ?? "",
-            urlSmall: photos?[indexPath.row].urlSmall ?? "")
+            url: photos?[indexPath.row].url ?? "")
         
         return cell
     }
@@ -152,7 +151,7 @@ final class FriendCVC: UICollectionViewController {
         viewForSmooth.frame = view.bounds
         chosenPhoto = collectionView.cellForItem(at: chosenIndex) as! FriendPage
 
-        enlargedPhoto = UIImageView(image: chosenPhoto.enlargedPhoto.image)
+        enlargedPhoto = UIImageView(image: chosenPhoto.friendPhotoAlbumItem.image)
         enlargedPhoto.contentMode = .scaleAspectFill
         enlargedPhoto.frame = chosenPhoto.friendPhotoAlbumItem.frame
         enlargedPhoto.layer.position.x = chosenPhoto.frame.midX

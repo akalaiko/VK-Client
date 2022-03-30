@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import Kingfisher
 
 class FriendPage: UICollectionViewCell {
 
     @IBOutlet var friendPhotoAlbumItem: UIImageView!
-    var enlargedPhoto = UIImageView()
+    
     @IBOutlet var likeButton: UIButton!
     @IBAction func likeButtonPressed(_ sender: UIButton) {
         let likeCount = 0
@@ -36,13 +37,17 @@ class FriendPage: UICollectionViewCell {
         }
     }
     
-    func configure (url: String, urlSmall: String) {
+    func configure (url: String) {
+        self.friendPhotoAlbumItem.isHidden = true
         self.friendPhotoAlbumItem.image = nil
-        self.enlargedPhoto.image = nil
-        self.friendPhotoAlbumItem.downloaded(from: urlSmall)
+        self.friendPhotoAlbumItem.kf.setImage(
+            with: URL(string: url),
+            placeholder: UIImage(named: "default"),
+            options: [.transition(.fade(0.2))])
         self.friendPhotoAlbumItem.contentMode = .scaleAspectFill
-        self.enlargedPhoto.downloaded(from: url)
+        friendPhotoAlbumItem.isHidden = false
     }
+
 }
 
 

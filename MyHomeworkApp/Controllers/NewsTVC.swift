@@ -30,6 +30,7 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.sectionHeaderTopPadding = 0
     
         tableView.register(UINib(
             nibName: "newsTop",
@@ -90,7 +91,6 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let news = userNews[indexPath.section]
-        print(news)
         
         switch indexPath.row {
         case 0:

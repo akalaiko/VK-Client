@@ -15,9 +15,14 @@ class MyGroupsCell: UITableViewCell {
     }
     
     func configure(name: String, url: String) {
+        self.groupAvatar.isHidden = true
         self.groupAvatar.image = nil
-        self.groupAvatar.downloaded(from: url)
+        self.groupAvatar.kf.setImage(
+            with: URL(string: url),
+            placeholder: UIImage(named: "default"),
+            options: [.transition(.fade(0.2))])
         self.groupName.text = name
+        self.groupAvatar.isHidden = false
     }
     
 }
