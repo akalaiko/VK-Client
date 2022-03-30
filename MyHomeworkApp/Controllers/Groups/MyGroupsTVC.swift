@@ -14,33 +14,19 @@ final class MyGroupsTVC: UITableViewController {
     
     private var groupsToken: NotificationToken?
     private var groupsFiltered = [GroupRealm]()
-    private let networkService = NetworkService()
+    private let networkService = NetworkService<Group>()
     private var userGroups: Results<GroupRealm>? = try? RealmService.load(typeOf: GroupRealm.self)
     
     override func viewDidLoad() {
         super.viewDidLoad()
         myGroupsSearch.delegate = self
+        
         tableView.register(UINib(
             nibName: "MyGroupsCell",
             bundle: nil),
             forCellReuseIdentifier: "groupCell")
         
-        networkService.fetchGroups() { [weak self] result in
-            switch result {
-            case .success(let myGroups):
-                let realmGroup = myGroups.items.map { GroupRealm(group: $0) }
-                DispatchQueue.main.async {
-                    do {
-                        try RealmService.save(items: realmGroup)
-                        self?.userGroups = try RealmService.load(typeOf: GroupRealm.self)
-                    } catch {
-                        print(error)
-                    }
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
+        networkServiceFunction()
         sortGroups()
     }
     
@@ -72,7 +58,7 @@ final class MyGroupsTVC: UITableViewController {
         guard let existingGroup = userGroups?.filter("id == %@", group.id),
               existingGroup.isEmpty
         else { return }
-        let groupToRealm = GroupRealm(group: GroupData(id: group.id, name: group.name, avatar: group.avatar ?? ""))
+        let groupToRealm = GroupRealm(group: Group(id: group.id, name: group.name, avatar: group.avatar))
         try? RealmService.add(item: groupToRealm)
     }
 
@@ -99,6 +85,25 @@ final class MyGroupsTVC: UITableViewController {
         if editingStyle == .delete {
             let removeGroup = groupsFiltered.remove(at: indexPath.row)
                     try? RealmService.delete(object: removeGroup)
+        }
+    }
+    
+    func networkServiceFunction() {
+        networkService.fetch(type: .groups) { [weak self] result in
+            switch result {
+            case .success(let myGroups):
+                let realmGroup = myGroups.map { GroupRealm(group: $0) }
+                DispatchQueue.main.async {
+                    do {
+                        try RealmService.save(items: realmGroup)
+                        self?.userGroups = try RealmService.load(typeOf: GroupRealm.self)
+                    } catch {
+                        print(error)
+                    }
+                }
+            case .failure(let error):
+                print(error)
+            }
         }
     }
     

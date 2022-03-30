@@ -15,7 +15,7 @@ class GroupRealm: Object {
 }
 
 extension GroupRealm {
-    convenience init(group: GroupData) {
+    convenience init(group: Group) {
         self.init()
         self.id = group.id
         self.name = group.name

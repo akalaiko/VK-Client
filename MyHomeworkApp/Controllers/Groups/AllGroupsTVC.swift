@@ -11,7 +11,7 @@ class AllGroupsTVC: UITableViewController {
     @IBOutlet var allGroupsSearch: UISearchBar!
     
     private var timer = Timer()
-    private let networkService = NetworkService()
+    private let networkService = NetworkService<Group>()
     private var searchQuery = String()
     var allGroupsFiltered = [Group]() {
         didSet {
@@ -44,7 +44,7 @@ class AllGroupsTVC: UITableViewController {
 
         cell.configure(
             name: availableGroup.name,
-            url: availableGroup.avatar ?? "")
+            url: availableGroup.avatar)
         
         return cell
     }
@@ -66,21 +66,22 @@ extension AllGroupsTVC: UISearchBarDelegate {
         searchQuery = searchText
         allGroupsFiltered.removeAll()
         
-        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [self] _ in
-                networkService.fetchGroupsSearch(searchQuery) { [weak self] result in
-                    switch result {
-                    case .success(let allGroups):
-                        allGroups.items.forEach() { i in
-                            self?.allGroupsFiltered.append(
-                                Group( id: i.id,
-                                       name: i.name,
-                                       avatar: i.avatar))
-                        }
-                    case .failure(let error):
-                        print(error)
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [self] _ in networkServiceFunction() })
+    }
+    
+    func  networkServiceFunction() {
+        networkService.fetch(type: .groupSearch, q: searchQuery) { [weak self] result in
+                switch result {
+                case .success(let allGroups):
+                    allGroups.forEach() { i in
+                        self?.allGroupsFiltered.append(
+                            Group( id: i.id,
+                                   name: i.name,
+                                   avatar: i.avatar))
                     }
+                case .failure(let error):
+                    print(error)
                 }
             }
-        )
     }
 }

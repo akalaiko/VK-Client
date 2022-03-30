@@ -10,6 +10,7 @@ import UIKit
 class FriendPage: UICollectionViewCell {
 
     @IBOutlet var friendPhotoAlbumItem: UIImageView!
+    var enlargedPhoto = UIImageView()
     @IBOutlet var likeButton: UIButton!
     @IBAction func likeButtonPressed(_ sender: UIButton) {
         let likeCount = 0
@@ -35,9 +36,12 @@ class FriendPage: UICollectionViewCell {
         }
     }
     
-    func configure (url: String) {
-        self.friendPhotoAlbumItem.downloaded(from: url)
+    func configure (url: String, urlSmall: String) {
+        self.friendPhotoAlbumItem.image = nil
+        self.enlargedPhoto.image = nil
+        self.friendPhotoAlbumItem.downloaded(from: urlSmall)
         self.friendPhotoAlbumItem.contentMode = .scaleAspectFill
+        self.enlargedPhoto.downloaded(from: url)
     }
 }
 

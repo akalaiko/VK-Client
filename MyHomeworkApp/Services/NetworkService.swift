@@ -7,15 +7,19 @@
 
 import Foundation
 
-final class NetworkService {
+final class NetworkService<ItemsType: Decodable>  {
     
-    lazy var mySession = URLSession(configuration: configuration)
+    enum requestType {
+        case friends
+        case groups
+        case groupSearch
+        case photos
+        case feed
+    }
     
-    let configuration: URLSessionConfiguration = {
-        let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 10.0
-        return config
-    }()
+    lazy var mySession = URLSession.shared
+    let scheme = "https"
+    let host = "api.vk.com"
     
     private var urlConstructor: URLComponents = {
         var constructor = URLComponents()
@@ -24,119 +28,70 @@ final class NetworkService {
         return constructor
     }()
     
-    func fetchFriends(completion: @escaping (Result<Friends, Error>) -> Void) {
+    func fetch(type: requestType, q: String? = "", id: Int? = 0, completion: @escaping (Result<[ItemsType], Error>) -> Void) {
         var constructor = urlConstructor
-        constructor.path = "/method/friends.get"
-        constructor.queryItems = [
-            URLQueryItem(name: "user_id", value: "\(SingletonModel.instance.userID)"),
-            URLQueryItem(name: "order", value: "name"),
-            URLQueryItem(name: "fields", value: "sex,photo_200"),
-            URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
-            URLQueryItem(name: "v", value: "5.131"),
-        ]
-        guard let url = constructor.url else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        
-        let task = mySession.dataTask(with: request) { (data, response, error) in
-            guard
-                error == nil,
-                let data = data
-            else { return }
-            do {
-                let friendsResponse = try JSONDecoder().decode(FriendsResponse.self, from: data)
-                completion(.success(friendsResponse.response))
-            } catch {
-                completion(.failure(error))
-            }
+        switch type {
+        case .friends:
+            constructor.path = "/method/friends.get"
+            constructor.queryItems = [
+                URLQueryItem(name: "user_id", value: "\(SingletonModel.instance.userID)"),
+                URLQueryItem(name: "order", value: "name"),
+                URLQueryItem(name: "fields", value: "sex,photo_50,photo_200"),
+                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+                URLQueryItem(name: "v", value: "5.131"),
+            ]
+        case .groups:
+            constructor.path = "/method/groups.get"
+            constructor.queryItems = [
+                URLQueryItem(name: "user_id", value: "\(SingletonModel.instance.userID)"),
+                URLQueryItem(name: "extended", value: "1"),
+                URLQueryItem(name: "v", value: "5.131"),
+                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+            ]
+        case .groupSearch:
+            constructor.path = "/method/groups.search"
+            constructor.queryItems = [
+                URLQueryItem(name: "q", value: q),
+                URLQueryItem(name: "count", value: "20"),
+                URLQueryItem(name: "sort", value: "3"),
+                URLQueryItem(name: "v", value: "5.131"),
+                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+            ]
+        case .photos:
+            constructor.path = "/method/photos.get"
+            constructor.queryItems = [
+                URLQueryItem(name: "owner_id", value: "\(id!)"),
+                URLQueryItem(name: "album_id", value: "profile"),
+                URLQueryItem(name: "rev", value: "1"),
+                URLQueryItem(name: "photo_sizes", value: "0"),
+                URLQueryItem(name: "extended", value: "1"),
+                URLQueryItem(name: "v", value: "5.131"),
+                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+            ]
+        case .feed:
+            constructor.path = "/method/newsfeed.get"
+            constructor.queryItems = [
+                URLQueryItem(name: "filters", value: "post,photo"),
+                URLQueryItem(name: "max_photos", value: "9"),
+//                URLQueryItem(name: "count", value: "10"),
+                URLQueryItem(name: "source_ids", value: "friends,groups,pages"),
+                URLQueryItem(name: "v", value: "5.131"),
+                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+            ]
         }
-        task.resume()
-    }
-    
-    func fetchGroups(completion: @escaping (Result<Groups, Error>) -> Void) {
-        var constructor = urlConstructor
-        constructor.path = "/method/groups.get"
-        constructor.queryItems = [
-            URLQueryItem(name: "user_id", value: "\(SingletonModel.instance.userID)"),
-            URLQueryItem(name: "extended", value: "1"),
-            URLQueryItem(name: "v", value: "5.131"),
-            URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
-        ]
-        guard let url = constructor.url else { return }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        
-        let task = mySession.dataTask(with: request) { (data, response, error) in
-            guard
-                error == nil,
-                let data = data
-            else { return }
-            do {
-                let groupsResponse = try JSONDecoder().decode(GroupsResponse.self, from: data)
-                completion(.success(groupsResponse.response))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-        task.resume()
-    }
-        
-    func fetchGroupsSearch(_ q: String, completion: @escaping (Result<Groups, Error>) -> Void) {
-        var constructor = urlConstructor
-        constructor.path = "/method/groups.search"
-        constructor.queryItems = [
-            URLQueryItem(name: "q", value: q),
-            URLQueryItem(name: "count", value: "20"),
-            URLQueryItem(name: "sort", value: "3"),
-            URLQueryItem(name: "v", value: "5.131"),
-            URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
-        ]
-        guard let url = constructor.url else { return }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        
-        let task = mySession.dataTask(with: request) { (data, response, error) in
-            guard
-                error == nil,
-                let data = data
-            else { return }
-            do {
-                let groupsResponse = try JSONDecoder().decode(GroupsResponse.self, from: data)
-                completion(.success(groupsResponse.response))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-        task.resume()
-    }
-    
-    func fetchPhotos(id: Int, completion: @escaping (Result<Photos,Error>) -> Void) {
-        var constructor = urlConstructor
-        constructor.path = "/method/photos.get"
-        constructor.queryItems = [
-            URLQueryItem(name: "owner_id", value: "\(id)"),
-            URLQueryItem(name: "album_id", value: "profile"),
-            URLQueryItem(name: "rev", value: "1"),
-            URLQueryItem(name: "photo_sizes", value: "0"),
-            URLQueryItem(name: "extended", value: "1"),
-            URLQueryItem(name: "v", value: "5.131"),
-            URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
-        ]
-        guard let url = constructor.url else { return }
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
 
-        let task = mySession.dataTask(with: request) { (data, response, error) in
+        guard let url = constructor.url else { return }
+        
+        let task = mySession.dataTask(with: url) { data, response, error in
             guard
                 error == nil,
                 let data = data
             else { return }
-            do {
-                let photosResponse = try JSONDecoder().decode(PhotosResponse.self, from: data)
-                completion(.success(photosResponse.response))
+            do{
+                let json = try JSONDecoder().decode(Response<ItemsType>.self, from: data)
+                completion(.success(json.response.items))
             } catch {
+                print(error)
                 completion(.failure(error))
             }
         }

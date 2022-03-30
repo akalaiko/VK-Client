@@ -32,6 +32,11 @@ final class RealmService {
         return realm.objects(T.self)
     }
     
+    class func load<T: Object>(typeOf: T.Type) throws -> [T] {
+        let realm = try Realm()
+        return realm.objects(T.self).map { $0 }
+    }
+    
     class func delete<T:Object>(object: T) throws {
         let realm = try Realm()
         try realm.write {

@@ -58,7 +58,6 @@ final class VKLoginVC: UIViewController {
         guard
             let url = urlComponents.url
         else { return }
-        
         webView.load(URLRequest(url: url))
     }
 }

@@ -13,8 +13,9 @@ class newsTop: UITableViewCell {
     @IBOutlet var groupName: UILabel!
     @IBOutlet var newsTime: UILabel!
     
-    func configure(avatar: UIImage?, name: String, newsTime: String) {
-        self.groupAvatar.image = avatar
+    func configure(avatar: String, name: String, newsTime: String) {
+        self.groupAvatar.image = nil
+        self.groupAvatar.downloaded(from: avatar)
         self.groupName.text = name
         self.newsTime.text = newsTime
     }

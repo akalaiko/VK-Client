@@ -15,6 +15,7 @@ class MyGroupsCell: UITableViewCell {
     }
     
     func configure(name: String, url: String) {
+        self.groupAvatar.image = nil
         self.groupAvatar.downloaded(from: url)
         self.groupName.text = name
     }

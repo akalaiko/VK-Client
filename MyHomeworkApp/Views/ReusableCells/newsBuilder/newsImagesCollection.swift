@@ -8,7 +8,8 @@
 import UIKit
 
 class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
-    var currentNews: NewsModel?
+    var currentNews: News? = nil
+    var photoURLs: [String] = []
     var numberOfItems = CGFloat()
     
     @IBOutlet var collectionView: UICollectionView!
@@ -17,28 +18,12 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
     @IBOutlet var aspect31: NSLayoutConstraint!
     @IBOutlet var aspect32: NSLayoutConstraint!
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        currentNews?.images?.count ?? 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "newsImageSingle",
-            for: indexPath) as? newsImageCell
-        else { return UICollectionViewCell() }
-        
-        cell.newsImage.image = currentNews?.images![indexPath.row]
-        
-        return cell
-    }
-    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
         collectionView.delegate = self
         collectionView.dataSource = self
-        numberOfItems = CGFloat(currentNews?.images?.count ?? 1)
+        numberOfItems = CGFloat(photoURLs.count)
         configureLayout()
      
         collectionView.register(
@@ -47,8 +32,25 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
                    bundle: nil),
                forCellWithReuseIdentifier: "newsImageSingle")
     }
-
     
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        photoURLs.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        guard let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "newsImageSingle",
+            for: indexPath) as? newsImageCell
+        else { return UICollectionViewCell() }
+
+        cell.configure(url: photoURLs[indexPath.row])
+        
+        
+        return cell
+    }
+    
+
     func configureLayout() {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         let width = UIScreen.main.bounds.width

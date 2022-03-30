@@ -14,7 +14,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     private var friendsDictionary = [String: [UserRealm]]()
     private var friendsSectionTitles = [String]()
     private var friendsFilteredDictionary = [String: [UserRealm]]()
-    private let networkService = NetworkService()
+    private let networkService = NetworkService<User>()
     private var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self)
     private var friendsToken: NotificationToken?
 
@@ -87,11 +87,11 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     }
     
     func networkServiceFunction() {
-        networkService.fetchFriends() { [weak self] result in
+        networkService.fetch(type: .friends) { [weak self] result in
             switch result {
             case .success(let responseFriends):
-                let items = responseFriends.items.map { UserRealm(user: $0) }
                 DispatchQueue.main.async {
+                    let items = responseFriends.map { UserRealm(user: $0) }
                     do {
                         try RealmService.save(items: items)
                         self?.friends = try RealmService.load(typeOf: UserRealm.self)

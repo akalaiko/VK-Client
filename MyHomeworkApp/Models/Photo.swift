@@ -7,62 +7,47 @@
 
 import Foundation
 
-struct PhotosResponse {
-    let response: Photos
-}
-
-extension PhotosResponse: Codable {
-    enum CodingKeys: String, CodingKey {
-        case response
-    }
-}
-
 struct Photos {
-    let count: Int
-    let items: [Albums]
+    let sizes: [Photo]
+//    let likes: Likes
+    let ownerID: Int
 }
 
 extension Photos: Codable {
     enum CodingKeys: String, CodingKey {
-        case count
-        case items
-    }
-}
-
-struct Albums {
-    let sizes: [Photo]
-    let likes: Likes
-    let ownerID: Int
-}
-
-extension Albums: Codable {
-    enum CodingKeys: String, CodingKey {
         case sizes
-        case likes
+//        case likes
         case ownerID = "owner_id"
     }
 }
 
 struct Photo {
-    let height: Int
     let url: String
-    let type: String
+//    let type: String = ""
+    
+    init(url: String) {
+        self.url = url
+    }
 }
 
 extension Photo: Codable {
     enum CodingKeys: String, CodingKey {
-        case height
         case url
-        case type
+//        case type
     }
 }
 
-struct Likes {
-    let count: Int
-}
+//struct Likes {
+//    let count: Int
+//}
+//
+//extension Likes: Codable {
+//    enum CodingKeys: String, CodingKey {
+//        case count
+//    }
+//}
 
-extension Likes: Codable {
-    enum CodingKeys: String, CodingKey {
-        case count
-    }
+struct Attachment: Decodable {
+    let type: String
+    let photo: Photos?
 }

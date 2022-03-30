@@ -12,11 +12,10 @@ final class FriendCVC: UICollectionViewController {
     
     var friend: UserRealm?
     private var viewForSmooth = UIView()
-    private var currentIndex = Int()
     static var freakingIndex = Int()
     private var chosenPhoto = FriendPage()
     private var enlargedPhoto = UIImageView()
-    private let networkService = NetworkService()
+    private let networkService = NetworkService<Photos>()
     private var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
     private var photosToken: NotificationToken?
 
@@ -107,7 +106,7 @@ final class FriendCVC: UICollectionViewController {
     
         header.configure(
             friendName: currentFriend.fullName,
-            url: currentFriend.photo,
+            url: currentFriend.photoBig,
             friendGender: (currentFriend.sex == 1) ? "female":"male" )
         
         return header
@@ -120,7 +119,8 @@ final class FriendCVC: UICollectionViewController {
             for: indexPath) as? FriendPage
         else { return UICollectionViewCell() }
         cell.configure(
-            url: photos?[indexPath.row].url ?? "")
+            url: photos?[indexPath.row].url ?? "",
+            urlSmall: photos?[indexPath.row].urlSmall ?? "")
         
         return cell
     }
@@ -142,7 +142,6 @@ final class FriendCVC: UICollectionViewController {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "showPhoto") as? LargePhoto {
             vc.photos = photos!
             vc.chosenPhotoIndex = indexPath.row
-            currentIndex = indexPath.row
             vc.friend = friend
             preAnimation(indexPath,vc)
         }
@@ -153,7 +152,7 @@ final class FriendCVC: UICollectionViewController {
         viewForSmooth.frame = view.bounds
         chosenPhoto = collectionView.cellForItem(at: chosenIndex) as! FriendPage
 
-        enlargedPhoto = UIImageView(image: chosenPhoto.friendPhotoAlbumItem.image)
+        enlargedPhoto = UIImageView(image: chosenPhoto.enlargedPhoto.image)
         enlargedPhoto.contentMode = .scaleAspectFill
         enlargedPhoto.frame = chosenPhoto.friendPhotoAlbumItem.frame
         enlargedPhoto.layer.position.x = chosenPhoto.frame.midX
@@ -243,11 +242,11 @@ final class FriendCVC: UICollectionViewController {
     }
     
     func networkServiceFunction() {
-        networkService.fetchPhotos(id: friend!.id){ [weak self] result in
+        networkService.fetch(type: .photos, id: friend!.id){ [weak self] result in
             switch result {
             case .success(let photos):
                 DispatchQueue.main.async {
-                    let photoRealm = photos.items.map { PhotoRealm(ownerID: self?.friend?.id ?? 0, photo: $0) }
+                    let photoRealm = photos.map { PhotoRealm(ownerID: self?.friend?.id ?? 0, photo: $0) }
                     do {
                     try RealmService.save(items: photoRealm)
                         self?.photos = try RealmService.load(typeOf: PhotoRealm.self).filter("ownerID == %@", self?.friend?.id ?? "")
