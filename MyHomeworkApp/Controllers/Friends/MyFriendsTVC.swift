@@ -93,12 +93,14 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
             switch result {
             case .success(let responseFriends):
                     let items = responseFriends.map { UserRealm(user: $0) }
+                DispatchQueue.main.async {
                     do {
                         try RealmService.save(items: items)
                         self?.friends = try RealmService.load(typeOf: UserRealm.self)
                     } catch {
                         print(error)
                     }
+                }
             case .failure(let error):
                 print(error)
             }

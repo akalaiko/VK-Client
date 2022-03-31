@@ -11,10 +11,6 @@ import RealmSwift
 final class FriendCVC: UICollectionViewController {
     
     var friend: UserRealm?
-    private var viewForSmooth = UIView()
-    static var freakingIndex = Int()
-    private var chosenPhoto = FriendPage()
-    private var enlargedPhoto = UIImageView()
     private let networkService = NetworkService<Photos>()
     private var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
     private var photosToken: NotificationToken?
@@ -23,10 +19,7 @@ final class FriendCVC: UICollectionViewController {
         super.viewDidLoad()
         collectionView.delegate = self
         collectionView.dataSource = self
-        
-        viewForSmooth.alpha = 0.0
-        configureLayout()
-
+    
         collectionView.register(
             UINib(
                 nibName: "FriendPage",
@@ -40,15 +33,8 @@ final class FriendCVC: UICollectionViewController {
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "friendHeader")
         
+        configureLayout()
         networkServiceFunction()
-    }
-    
-    override func viewWillAppear(_ animated: Bool = false) {
-        if CGFloat(viewForSmooth.alpha).rounded(.up) == 1 {
-            enlargedPhoto.downloaded(from: photos![FriendCVC.freakingIndex].url)
-            viewForSmooth.alpha = 1.0
-            postAnimation([0, FriendCVC.freakingIndex])
-        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -118,8 +104,8 @@ final class FriendCVC: UICollectionViewController {
             withReuseIdentifier: "friendPageCell",
             for: indexPath) as? FriendPage
         else { return UICollectionViewCell() }
-        cell.configure(
-            url: photos?[indexPath.row].url ?? "")
+        
+        cell.configure(url: photos?[indexPath.row].url ?? "")
         
         return cell
     }
@@ -141,103 +127,9 @@ final class FriendCVC: UICollectionViewController {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "showPhoto") as? LargePhoto {
             vc.photos = photos!
             vc.chosenPhotoIndex = indexPath.row
-            vc.friend = friend
-            preAnimation(indexPath,vc)
+//            vc.friend = friend
+            self.navigationController?.pushViewController(vc, animated: false)
         }
-    }
-    
-    func preAnimation(_ chosenIndex: IndexPath, _ vc: LargePhoto) {
-        viewForSmooth.backgroundColor = UIColor.white
-        viewForSmooth.frame = view.bounds
-        chosenPhoto = collectionView.cellForItem(at: chosenIndex) as! FriendPage
-
-        enlargedPhoto = UIImageView(image: chosenPhoto.friendPhotoAlbumItem.image)
-        enlargedPhoto.contentMode = .scaleAspectFill
-        enlargedPhoto.frame = chosenPhoto.friendPhotoAlbumItem.frame
-        enlargedPhoto.layer.position.x = chosenPhoto.frame.midX
-        enlargedPhoto.layer.position.y = chosenPhoto.frame.midY + chosenPhoto.frame.size.height/1.33
-        
-        let scaling = self.view.frame.width / enlargedPhoto.frame.width
-        
-        self.view.addSubview(viewForSmooth)
-        self.view.addSubview(enlargedPhoto)
-        
-        UIView.animateKeyframes(
-            withDuration: 1.0,
-            delay: 0.0,
-            options: [
-                .calculationModePaced
-            ],
-            animations: {
-
-                UIView.addKeyframe(
-                    withRelativeStartTime: 0.0,
-                    relativeDuration: 1.0,
-                    animations: {
-                        self.enlargedPhoto.layer.position = CGPoint(
-                            x: self.enlargedPhoto.layer.frame.width * scaling / 2,
-                            y: self.view.frame.height / 2)
-                        self.viewForSmooth.backgroundColor = UIColor.white.withAlphaComponent(1.0)
-                        self.viewForSmooth.alpha = 1.0
-                    })
-                
-                UIView.addKeyframe(
-                    withRelativeStartTime: 0.0,
-                    relativeDuration: 1.0,
-                    animations: {
-                        let scale = CGAffineTransform(
-                            scaleX: scaling,
-                            y: scaling)
-                        self.enlargedPhoto.transform = scale
-                })
-            },
-            completion: { i in
-                self.viewForSmooth.alpha = 0.1
-                self.navigationController?.pushViewController(vc, animated: false)
-            })
-    }
-    
-    func postAnimation(_ chosenIndex: IndexPath) {
-        
-        chosenPhoto = collectionView.cellForItem(at: chosenIndex) as! FriendPage
-        
-        let x = chosenPhoto.frame.midX
-        let y = chosenPhoto.frame.midY + chosenPhoto.frame.size.height/1.33
-        let scaling = self.view.frame.width / enlargedPhoto.frame.width
-        
-        UIView.animateKeyframes(
-            withDuration: 1.0,
-            delay: 0.0,
-            options: [
-                .calculationModePaced
-            ],
-            animations: {
-
-                UIView.addKeyframe(
-                    withRelativeStartTime: 0.0,
-                    relativeDuration: 1.0,
-                    animations: {
-                        self.enlargedPhoto.layer.position = CGPoint(
-                            x: x,
-                            y: y)
-                        self.viewForSmooth.backgroundColor = UIColor.white.withAlphaComponent(0.0)
-                        self.viewForSmooth.alpha = 0.0
-                    })
-                
-                UIView.addKeyframe(
-                    withRelativeStartTime: 0.0,
-                    relativeDuration: 1.0,
-                    animations: {
-                        let scale = CGAffineTransform(
-                            scaleX: scaling,
-                            y: scaling)
-                        self.enlargedPhoto.transform = scale
-                })
-            },
-            completion: { i in
-                self.viewForSmooth.removeFromSuperview()
-                self.enlargedPhoto.removeFromSuperview()
-            })
     }
     
     func networkServiceFunction() {

@@ -8,10 +8,9 @@
 import UIKit
 import RealmSwift
 
-class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
-    @IBOutlet var photo: UIImageView!
+final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     
-    var friend: UserRealm?
+    @IBOutlet var photo: UIImageView!
     var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
     var chosenPhotoIndex = Int()
     private var photoSubview = UIImageView()
@@ -21,12 +20,7 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         guard let photos = photos else { return }
 
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
-        photo.kf.setImage(
-            with: URL(string: photos[chosenPhotoIndex].url))
-//        photo.downloaded(from: photos[chosenPhotoIndex].url)
-        photo.isUserInteractionEnabled = true
-        photo.contentMode = .scaleAspectFill
-        photoSubview.contentMode = .scaleAspectFill
+        photo.kf.setImage(with: URL(string: photos[chosenPhotoIndex].url))
 
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
             swipeRight.direction = .right
@@ -41,46 +35,32 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
             view.addGestureRecognizer(swipeDown)
     }
     
-    override func viewWillDisappear(_ animated: Bool = false) {
-        if let vc = storyboard?.instantiateViewController(withIdentifier: "friendCVC") as? FriendCVC {
-            vc.friend = friend
-            FriendCVC.freakingIndex = chosenPhotoIndex
-        }
-    }
-    
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool { true }
     
-    @objc func swipePhoto(_ gesture: UIGestureRecognizer) {
-        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-            switch swipeGesture.direction {
-            case .left:
-                setupSubview(on: .right)
-                animateFlip()
-            case .right:
-                setupSubview(on: .left)
-                animateFlip()
-            case .down:
-                navigationController?.popViewController(animated: false)
-            default:
-                break
-            }
+    @objc func swipePhoto(_ gesture: UISwipeGestureRecognizer) {
+        switch gesture.direction {
+        case .left:
+            setupSubview(on: .right)
+            animateFlip()
+        case .right:
+            setupSubview(on: .left)
+            animateFlip()
+        case .down:
+            navigationController?.popViewController(animated: true)
+        default:
+            break
         }
     }
     
     func animateFlip() {
-        view.layoutIfNeeded()
-        
         UIView.animateKeyframes(
-            withDuration: 1.0,
+            withDuration: 0.5,
             delay: 0.0,
-            options: [
-                .calculationModeLinear
-            ]) {
+            options: [.calculationModeLinear] ) {
                 UIView.addKeyframe(
                     withRelativeStartTime: 0.0,
                     relativeDuration: 1) { [self] in
                         photoSubview.frame.size.width = view.bounds.width
-                        photoSubview.frame.size.height = photoSubview.frame.size.width
                         self.photoSubview.center.y = self.photo.center.y
                     }
                 UIView.addKeyframe(
@@ -93,21 +73,18 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
                     relativeDuration: 0.5) {
                         self.photoSubview.center.x = self.photo.center.x
                     }
-                
             } completion: { isCompleted in
-                self.photo.kf.setImage(
-                    with: URL(string: self.photos![self.chosenPhotoIndex].url))
-//                self.photo.downloaded(from: self.photos![self.chosenPhotoIndex].url)
+                self.photo.image = self.photoSubview.image
                 self.photo.alpha = 1
-                self.view.layoutIfNeeded()
+                self.photoSubview.removeFromSuperview()
             }
     }
     
     func setupSubview(on side: UISwipeGestureRecognizer.Direction) {
         photoSubview.frame.size.width = view.bounds.width * 0.5
-        photoSubview.frame.size.height = photoSubview.frame.size.width
+        photoSubview.frame.size.height = photo.frame.size.height
         photoSubview.center.y = photo.center.y
-        photoSubview.contentMode = .scaleAspectFill
+        photoSubview.contentMode = .scaleAspectFit
 
         switch side {
         case .right:
@@ -127,12 +104,8 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         default:
             break
         }
-        photoSubview.kf.setImage(
-            with: URL(string: photos![chosenPhotoIndex].url))
-        photoSubview.contentMode = .scaleAspectFill
-//        photoSubview.downloaded(from: photos![chosenPhotoIndex].url)
+        photoSubview.kf.setImage(with: URL(string: photos![chosenPhotoIndex].url))
         title = "Photo \(chosenPhotoIndex + 1) of \(photos!.count)"
         view.addSubview(photoSubview)
        }
-
 }

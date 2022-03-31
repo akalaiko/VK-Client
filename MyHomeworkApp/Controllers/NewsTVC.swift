@@ -25,7 +25,6 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
         }
     }
 
-    
     var indexOfCell: Identifier?
 
     override func viewDidLoad() {
@@ -114,7 +113,7 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
             cell.configure(
                 avatar: group!.avatar,
                 name: group!.name,
-                newsTime: news.date.toString(dateFormat: .dateTime))
+                newsTime: Date(timeIntervalSince1970: news.date).toString(dateFormat: .dateTime))
             return cell
             
         case .text:
@@ -131,8 +130,6 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
             })
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "newsImageCell", for: indexPath) as? newsImagesCollection
             else { return UITableViewCell() }
-            cell.currentNews = nil
-            cell.photoURLs = []
             
             cell.currentNews = news
             cell.photoURLs = photos

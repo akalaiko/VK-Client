@@ -12,7 +12,7 @@ import Foundation
 struct News {
     
     let sourceID: Int
-    let date: Date
+    let date: Double
     var text: String?
     let photosURLs: [Attachment]?
     let likes: Likes
@@ -42,8 +42,6 @@ extension News: Comparable {
     }
 }
 
-
-// MARK: - Comments
 struct Comments: Codable {
     let count: Int
 
@@ -60,12 +58,10 @@ struct Likes: Codable {
     }
 }
 
-//// MARK: - Views
 //struct Views: Codable {
 //    let count: Int
 //}
 
-// MARK: - Reposts
 struct Reposts: Codable {
     let count: Int
 

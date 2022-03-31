@@ -20,7 +20,6 @@ final class MyGroupsTVC: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         myGroupsSearch.delegate = self
-        
         tableView.register(UINib(
             nibName: "MyGroupsCell",
             bundle: nil),
