@@ -18,10 +18,12 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let photos = photos else { return}
+        guard let photos = photos else { return }
 
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
-        photo.downloaded(from: photos[chosenPhotoIndex].url)
+        photo.kf.setImage(
+            with: URL(string: photos[chosenPhotoIndex].url))
+//        photo.downloaded(from: photos[chosenPhotoIndex].url)
         photo.isUserInteractionEnabled = true
         photo.contentMode = .scaleAspectFill
         photoSubview.contentMode = .scaleAspectFill
@@ -46,9 +48,7 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         }
     }
     
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        true
-    }
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool { true }
     
     @objc func swipePhoto(_ gesture: UIGestureRecognizer) {
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
@@ -95,7 +95,9 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
                     }
                 
             } completion: { isCompleted in
-                self.photo.downloaded(from: self.photos![self.chosenPhotoIndex].url)
+                self.photo.kf.setImage(
+                    with: URL(string: self.photos![self.chosenPhotoIndex].url))
+//                self.photo.downloaded(from: self.photos![self.chosenPhotoIndex].url)
                 self.photo.alpha = 1
                 self.view.layoutIfNeeded()
             }
@@ -105,6 +107,7 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         photoSubview.frame.size.width = view.bounds.width * 0.5
         photoSubview.frame.size.height = photoSubview.frame.size.width
         photoSubview.center.y = photo.center.y
+        photoSubview.contentMode = .scaleAspectFill
 
         switch side {
         case .right:
@@ -124,8 +127,10 @@ class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         default:
             break
         }
-        
-        photoSubview.downloaded(from: photos![chosenPhotoIndex].url)
+        photoSubview.kf.setImage(
+            with: URL(string: photos![chosenPhotoIndex].url))
+        photoSubview.contentMode = .scaleAspectFill
+//        photoSubview.downloaded(from: photos![chosenPhotoIndex].url)
         title = "Photo \(chosenPhotoIndex + 1) of \(photos!.count)"
         view.addSubview(photoSubview)
        }
