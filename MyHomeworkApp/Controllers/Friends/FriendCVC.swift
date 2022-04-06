@@ -12,57 +12,32 @@ final class FriendCVC: UICollectionViewController {
     
     var friend: UserRealm?
     private let networkService = NetworkService<Photos>()
-    private var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
+    private var photos: Results<PhotoRealm>? {
+        didSet {
+            self.collectionView.reloadData()
+        }
+    }
     private var photosToken: NotificationToken?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.delegate = self
         collectionView.dataSource = self
-    
-        collectionView.register(
-            UINib(
-                nibName: "FriendPage",
-                bundle: nil),
-            forCellWithReuseIdentifier: "friendPageCell")
-        
-        collectionView.register(
-            UINib(
-                nibName: "FriendCVCHeader",
-                bundle: nil),
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: "friendHeader")
+
+        collectionView.register(FriendPage.self)
+        collectionView.register(header: FriendCVCHeader.self)
         
         configureLayout()
         networkServiceFunction()
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         photosToken = photos?.observe { [weak self] photosChanges in
             guard let self = self else { return }
             switch photosChanges {
-            case .initial(_):
+            case .initial, .update:
                 self.collectionView.reloadData()
-            case let .update(
-                _,
-                deletions: deletions,
-                insertions: insertions,
-                modifications: modifications):
-                
-                let delRowsIndex = deletions.map { IndexPath(
-                    row: $0,
-                    section: 0) }
-                let insertRowsIndex = insertions.map { IndexPath(
-                    row: $0,
-                    section: 0)}
-                let modificationIndex = modifications.map { IndexPath(
-                    row: $0,
-                    section: 0)}
-                
-                self.collectionView.deleteItems(at: delRowsIndex)
-                self.collectionView.insertItems(at: insertRowsIndex)
-                self.collectionView.reloadItems(at: modificationIndex)
             case .error(let error):
                 print(error)
             }
@@ -81,32 +56,20 @@ final class FriendCVC: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { photos?.count ?? 0 }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        guard let header = collectionView.dequeueReusableSupplementaryView(
-                ofKind: UICollectionView.elementKindSectionHeader,
-                withReuseIdentifier: "friendHeader",
-                for: indexPath) as? FriendCVCHeader
-        else { return UICollectionReusableView() }
-        
-        guard let currentFriend = friend else { return UICollectionViewCell() }
+        let header: FriendCVCHeader = collectionView.dequeueReusableSupplementaryView(for: indexPath)
+        guard let currentFriend = friend else { return FriendCVCHeader() }
     
         header.configure(
             friendName: currentFriend.fullName,
             url: currentFriend.photoBig,
             friendGender: (currentFriend.sex == 1) ? "female":"male" )
-        
         return header
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "friendPageCell",
-            for: indexPath) as? FriendPage
-        else { return UICollectionViewCell() }
-        
+        let cell: FriendPage = collectionView.dequeueReusableCell(for: indexPath)
         cell.configure(url: photos?[indexPath.row].url ?? "")
-        
         return cell
     }
     
@@ -116,18 +79,18 @@ final class FriendCVC: UICollectionViewController {
 
         layout.headerReferenceSize = CGSize(width: width, height: 120)
         layout.sectionHeadersPinToVisibleBounds = true
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.itemSize = CGSize(width: width / 3, height: width / 3)
+        layout.sectionInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
+        layout.itemSize = CGSize(width: width / 3 - 2, height: width / 3 - 2)
         layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
+        layout.minimumLineSpacing = 3
         collectionView.collectionViewLayout = layout
+        collectionView.backgroundColor = UIColor.systemBackground
     }
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "showPhoto") as? LargePhoto {
             vc.photos = photos!
             vc.chosenPhotoIndex = indexPath.row
-//            vc.friend = friend
             self.navigationController?.pushViewController(vc, animated: false)
         }
     }

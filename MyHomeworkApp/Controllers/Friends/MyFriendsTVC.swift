@@ -15,21 +15,22 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     private var friendsSectionTitles = [String]()
     private var friendsFilteredDictionary = [String: [UserRealm]]()
     private let networkService = NetworkService<User>()
-    private var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self)
     private var friendsToken: NotificationToken?
+    private var friends: Results<UserRealm>? = try? RealmService.load(typeOf: UserRealm.self) {
+        didSet {
+            DispatchQueue.main.async {
+                self.sortFriends()
+            }
+        }
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
         searchBar.delegate = self
         tableView.sectionHeaderTopPadding = 0
-        
-        tableView.register(UINib(
-            nibName: "MyFriendCell",
-            bundle: nil),
-            forCellReuseIdentifier: "friendCell")
-        
+        tableView.register(MyFriendCell.self)
         networkServiceFunction()
-        sortFriends()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -57,14 +58,15 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        friendsFilteredDictionary[friendsSectionTitles[section]]!.count
+        guard let rows = friendsFilteredDictionary[friendsSectionTitles[section]]?.count else { return 0 }
+        return rows
     }
     
     override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
         return friendsSectionTitles
     }
     
-// header & cell configure
+// section header & cell configure
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         return friendsSectionTitles[section]
@@ -76,15 +78,16 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "friendCell", for: indexPath) as? MyFriendCell else { return UITableViewCell() }
+        let cell: MyFriendCell = tableView.dequeueReusableCell(for: indexPath)
+        
         let letterKey = friendsSectionTitles[indexPath.section]
-           if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
-               let myFriend = friendsOnLetterKey[indexPath.row]
+        guard let friendsOnLetterKey = friendsFilteredDictionary[letterKey] else { return cell }
+        let myFriend = friendsOnLetterKey[indexPath.row]
 
-               cell.configure(
-                   name: myFriend.fullName,
-                   url: myFriend.photo)
-           }
+           cell.configure(
+               name: myFriend.fullName,
+               url: myFriend.photo)
+        
         return cell
     }
     
@@ -108,39 +111,39 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     }
     
     func sortFriends() {
-        guard let friends = friends
-        else { return }
-            for friend in friends where friend.firstName != "DELETED" {
-                friendsDictionary.removeAll()
-                
-                for index in friends.indices {
-                    let letterKey = String((friends[index].lastName).prefix(1))
-                        if var friendsOnLetterKey = friendsDictionary[letterKey] {
-                            friendsOnLetterKey.append(friends[index])
-                            friendsDictionary[letterKey] = friendsOnLetterKey
-                        } else {
-                            friendsDictionary[letterKey] = [friends[index]]
-                        }
-                }
-                friendsSectionTitles = [String](friendsDictionary.keys).sorted(by: { $0 < $1 })
+        guard let friends = friends else { return }
+        for friend in friends where friend.firstName != "DELETED" {
+            friendsDictionary.removeAll()
+
+            for index in friends.indices {
+                let letterKey = String((friends[index].lastName).prefix(1))
+                var friendsOnLetterKey = friendsDictionary[letterKey] ?? []
+                    friendsOnLetterKey.append(friends[index])
+                    friendsDictionary[letterKey] = friendsOnLetterKey
             }
-            self.friendsFilteredDictionary = self.friendsDictionary
-            self.tableView.reloadData()
+        }
+        friendsSectionTitles = [String](friendsDictionary.keys).sorted()
+        friendsFilteredDictionary = friendsDictionary
+        self.tableView.reloadData()
     }
+    
 // select & segue
     
     override func prepare( for segue: UIStoryboardSegue, sender: Any? ) {
-        guard segue.identifier == "goToFriend", let indexPath = tableView.indexPathForSelectedRow else { return }
-        guard let destination = segue.destination as? FriendCVC else { return }
+        guard segue.identifier == "goToFriend",
+                let indexPath = tableView.indexPathForSelectedRow,
+                let destination = segue.destination as? FriendCVC
+        else { return }
         let letterKey = friendsSectionTitles[indexPath.section]
-           if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
-               destination.friend = friendsOnLetterKey[indexPath.row]
-           }
+        if let friendsOnLetterKey = friendsFilteredDictionary[letterKey] {
+           destination.friend = friendsOnLetterKey[indexPath.row]
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         defer { tableView.deselectRow(at: indexPath, animated: true)}
         performSegue(withIdentifier: "goToFriend", sender: nil)
+        searchBarCancelButtonClicked(searchBar)
     }
 
 }
@@ -150,13 +153,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
 extension MyFriendsTVC: UISearchBarDelegate {
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        searchBar.showsCancelButton = true
-        guard !searchText.isEmpty else {
-            friendsFilteredDictionary = friendsDictionary
-            friendsSectionTitles = [String](friendsFilteredDictionary.keys).sorted()
-            tableView.reloadData()
-            return
-        }
+        guard !searchText.isEmpty else { return sortFriends() }
 
         friendsFilteredDictionary.removeAll()
         friendsSectionTitles.removeAll()
@@ -175,14 +172,7 @@ extension MyFriendsTVC: UISearchBarDelegate {
         searchBar.text = nil
         searchBar.showsCancelButton = false
         searchBar.endEditing(true)
-        friendsFilteredDictionary = friendsDictionary
-        friendsSectionTitles = [String](friendsFilteredDictionary.keys).sorted()
-        tableView.reloadData()
-    }
-
-    @objc func setSearchBar() {
-        searchBar.searchTextField.text = ""
-        searchBar.showsCancelButton = true
+        sortFriends()
     }
 
 }

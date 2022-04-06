@@ -18,7 +18,7 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
     }
     private let networkService = NetworkService<News>()
     var userNews = [News]() {
-            didSet {
+        didSet {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
             }
@@ -31,48 +31,12 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
         super.viewDidLoad()
         tableView.sectionHeaderTopPadding = 0
     
-        tableView.register(UINib(
-            nibName: "newsTop",
-            bundle: nil),
-            forCellReuseIdentifier: "newsTopCell")
+        tableView.register(newsTop.self)
+        tableView.register(newsText.self)
+        tableView.register(newsImagesCollection.self)
+        tableView.register(newsBottom.self)
         
-        tableView.register(UINib(
-            nibName: "newsText",
-            bundle: nil),
-            forCellReuseIdentifier: "newsTextCell")
-        
-        tableView.register(UINib(
-            nibName: "newsImagesCollection",
-            bundle: nil),
-            forCellReuseIdentifier: "newsImageCell")
-        
-        tableView.register(UINib(
-            nibName: "newsBottom",
-            bundle: nil),
-            forCellReuseIdentifier: "newsBottomCell")
-        
-        networkService.fetch(type: .feed) { [weak self] result in
-            switch result {
-            case .success(let myNews):
-                myNews.forEach() { i in
-                    guard let attachment = i.photosURLs else { return }
-                    attachment.forEach { j in
-                        guard j.type == "photo" else { return }
-                        let new = News(
-                            sourceID: i.sourceID,
-                            date: i.date,
-                            text: i.text ?? "",
-                            photosURLs: attachment,
-                            likes: i.likes,
-                            reposts: i.reposts,
-                            comments: i.comments)
-                        guard !self!.userNews.contains(new) else { return }
-                    self?.userNews.append(new) }
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
+        networkServiceFunction()
     }
 
     // MARK: - Table view data source
@@ -106,30 +70,28 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
         
         switch indexOfCell {
         case .top:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "newsTopCell", for: indexPath) as? newsTop
-            else { return UITableViewCell() }
+            let cell: newsTop = tableView.dequeueReusableCell(for: indexPath)
             let group = loadGroupByID(news.sourceID)
             
             cell.configure(
-                avatar: group!.avatar,
+                url: group!.avatar,
                 name: group!.name,
                 newsTime: Date(timeIntervalSince1970: news.date).toString(dateFormat: .dateTime))
             return cell
             
         case .text:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "newsTextCell", for: indexPath) as? newsText
-            else { return UITableViewCell() }
-            cell.newsText.text = news.text
+            let cell: newsText = tableView.dequeueReusableCell(for: indexPath)
+
+            cell.configure(text: news.text ?? "")
             return cell
             
         case .image:
+            let cell: newsImagesCollection = tableView.dequeueReusableCell(for: indexPath)
             var photos = [String]()
             news.photosURLs?.forEach({ i in
                 guard let photoURL = i.photo?.sizes.last?.url else { return }
                 photos.append(photoURL)
             })
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "newsImageCell", for: indexPath) as? newsImagesCollection
-            else { return UITableViewCell() }
             
             cell.currentNews = news
             cell.photoURLs = photos
@@ -137,31 +99,57 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate,UIGestureRecogniz
             return cell
             
         case .bottom:
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "newsBottomCell", for: indexPath) as? newsBottom
-            else { return UITableViewCell() }
+            let cell: newsBottom = tableView.dequeueReusableCell(for: indexPath)
 
-            cell.configure(isLiked: false, likesCounter: news.likes.count, commentCounter: news.comments.count, shareCounter: news.reposts.count)
+            cell.configure(
+                isLiked: false,
+                likesCounter: news.likes.count,
+                commentCounter: news.comments.count,
+                shareCounter: news.reposts.count)
 
             return cell
             
         case .none:
             return UITableViewCell()
-        
+        }
+    }
+    
+    func networkServiceFunction() {
+        networkService.fetch(type: .feed) { [weak self] result in
+            switch result {
+            case .success(let myNews):
+                DispatchQueue.main.async {
+                    myNews.forEach() { i in
+                        guard let attachment = i.photosURLs else { return }
+                        attachment.forEach { j in
+                            guard j.type == "photo" else { return }
+                            let new = News(
+                                sourceID: i.sourceID,
+                                date: i.date,
+                                text: i.text ?? "",
+                                photosURLs: attachment,
+                                likes: i.likes,
+                                reposts: i.reposts,
+                                comments: i.comments)
+                            guard self?.userNews.contains(new) == false else { return }
+                        self?.userNews.append(new) }
+                    }
+                    self?.tableView.reloadData()
+                }
+            case .failure(let error):
+                print(error)
+            }
         }
     }
     
     private func loadGroupByID(_ id: Int) -> Group? {
         do {
-            let realmGroups: [GroupRealm] = try RealmService.load(typeOf: GroupRealm.self)
-            if let group = realmGroups.filter({ $0.id == -id }).first {
+            let realmGroups: [GroupRealm] = try RealmService.load(type: GroupRealm.self)
+        guard let group = realmGroups.filter({ $0.id == -id }).first  else { return nil }
                 return Group(id: group.id, name: group.name, avatar: group.avatar)
-            } else {
-                return nil
-            }
         } catch {
             print(error)
             return nil
         }
     }
-
 }

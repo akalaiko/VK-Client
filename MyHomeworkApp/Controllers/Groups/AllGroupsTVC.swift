@@ -12,7 +12,11 @@ class AllGroupsTVC: UITableViewController {
     
     private var timer = Timer()
     private let networkService = NetworkService<Group>()
-    private var searchQuery = String()
+    private var searchQuery = String() {
+        didSet {
+            if self.searchQuery.isEmpty { self.allGroupsFiltered.removeAll() }
+        }
+    }
     var allGroupsFiltered = [Group]() {
         didSet {
             DispatchQueue.main.async {
@@ -23,10 +27,7 @@ class AllGroupsTVC: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.register(UINib(
-            nibName: "MyGroupsCell",
-            bundle: nil),
-            forCellReuseIdentifier: "groupCell")
+        tableView.register(MyGroupsCell.self)
     }
 
     // MARK: - Table view data source
@@ -37,8 +38,7 @@ class AllGroupsTVC: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "groupCell", for: indexPath) as? MyGroupsCell
-        else { return UITableViewCell() }
+        let cell: MyGroupsCell = tableView.dequeueReusableCell(for: indexPath)
         
         let availableGroup = allGroupsFiltered[indexPath.row]
 
@@ -50,38 +50,33 @@ class AllGroupsTVC: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        defer { tableView.deselectRow(
-            at: indexPath,
-            animated: true) }
-        performSegue(
-            withIdentifier: "addGroup",
-            sender: nil)
+        defer { tableView.deselectRow( at: indexPath, animated: true) }
+        performSegue( withIdentifier: "addGroup", sender: nil)
     }
 }
 
 extension AllGroupsTVC: UISearchBarDelegate {
 
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-
-        searchQuery = searchText
         allGroupsFiltered.removeAll()
-        
+        searchQuery = searchText
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { [self] _ in networkServiceFunction() })
     }
     
-    func  networkServiceFunction() {
+    func networkServiceFunction() {
+        guard !searchQuery.isEmpty else { return }
         networkService.fetch(type: .groupSearch, q: searchQuery) { [weak self] result in
-                switch result {
-                case .success(let allGroups):
-                    allGroups.forEach() { i in
-                        self?.allGroupsFiltered.append(
-                            Group( id: i.id,
-                                   name: i.name,
-                                   avatar: i.avatar))
-                    }
-                case .failure(let error):
-                    print(error)
+            switch result {
+            case .success(let allGroups):
+                allGroups.forEach() { i in
+                    self?.allGroupsFiltered.append(
+                        Group( id: i.id,
+                               name: i.name,
+                               avatar: i.avatar))
                 }
+            case .failure(let error):
+                print(error)
             }
+        }
     }
 }

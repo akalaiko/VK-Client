@@ -104,8 +104,9 @@ final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         default:
             break
         }
-        photoSubview.kf.setImage(with: URL(string: photos![chosenPhotoIndex].url))
-        title = "Photo \(chosenPhotoIndex + 1) of \(photos!.count)"
+        guard let photos = photos else { return }
+        photoSubview.kf.setImage(with: URL(string: photos[chosenPhotoIndex].url))
+        title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
         view.addSubview(photoSubview)
        }
 }

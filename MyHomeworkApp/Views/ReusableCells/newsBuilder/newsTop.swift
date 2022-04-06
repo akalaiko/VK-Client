@@ -9,14 +9,16 @@ import UIKit
 
 class newsTop: UITableViewCell {
 
-    @IBOutlet var groupAvatar: UIImageView!
-    @IBOutlet var groupName: UILabel!
-    @IBOutlet var newsTime: UILabel!
+    @IBOutlet var groupAvatar: UIImageView?
+    @IBOutlet var groupName: UILabel?
+    @IBOutlet var newsTime: UILabel?
     
-    func configure(avatar: String, name: String, newsTime: String) {
-        self.groupAvatar.image = nil
-        self.groupAvatar.downloaded(from: avatar)
-        self.groupName.text = name
-        self.newsTime.text = newsTime
+    func configure(url: String, name: String, newsTime: String) {
+        self.groupAvatar?.image = UIImage(named: "default")
+        self.groupAvatar?.kf.setImage(
+            with: URL(string: url),
+            placeholder: UIImage(named: "default"))
+        self.groupName?.text = name
+        self.newsTime?.text = newsTime
     }
 }

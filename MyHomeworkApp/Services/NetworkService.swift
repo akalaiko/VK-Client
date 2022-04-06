@@ -34,19 +34,19 @@ final class NetworkService<ItemsType: Decodable>  {
         case .friends:
             constructor.path = "/method/friends.get"
             constructor.queryItems = [
-                URLQueryItem(name: "user_id", value: "\(SingletonModel.instance.userID)"),
+                URLQueryItem(name: "user_id", value: "\(UserToken.instance.userID)"),
                 URLQueryItem(name: "order", value: "name"),
                 URLQueryItem(name: "fields", value: "sex,photo_50,photo_200"),
-                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+                URLQueryItem(name: "access_token", value: "\(UserToken.instance.token)"),
                 URLQueryItem(name: "v", value: "5.131"),
             ]
         case .groups:
             constructor.path = "/method/groups.get"
             constructor.queryItems = [
-                URLQueryItem(name: "user_id", value: "\(SingletonModel.instance.userID)"),
+                URLQueryItem(name: "user_id", value: "\(UserToken.instance.userID)"),
                 URLQueryItem(name: "extended", value: "1"),
                 URLQueryItem(name: "v", value: "5.131"),
-                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+                URLQueryItem(name: "access_token", value: "\(UserToken.instance.token)"),
             ]
         case .groupSearch:
             constructor.path = "/method/groups.search"
@@ -55,7 +55,7 @@ final class NetworkService<ItemsType: Decodable>  {
                 URLQueryItem(name: "count", value: "20"),
                 URLQueryItem(name: "sort", value: "3"),
                 URLQueryItem(name: "v", value: "5.131"),
-                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+                URLQueryItem(name: "access_token", value: "\(UserToken.instance.token)"),
             ]
         case .photos:
             constructor.path = "/method/photos.get"
@@ -66,17 +66,16 @@ final class NetworkService<ItemsType: Decodable>  {
                 URLQueryItem(name: "photo_sizes", value: "0"),
                 URLQueryItem(name: "extended", value: "1"),
                 URLQueryItem(name: "v", value: "5.131"),
-                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+                URLQueryItem(name: "access_token", value: "\(UserToken.instance.token)"),
             ]
         case .feed:
             constructor.path = "/method/newsfeed.get"
             constructor.queryItems = [
                 URLQueryItem(name: "filters", value: "post,photo"),
                 URLQueryItem(name: "max_photos", value: "9"),
-//                URLQueryItem(name: "count", value: "10"),
                 URLQueryItem(name: "source_ids", value: "friends,groups,pages"),
                 URLQueryItem(name: "v", value: "5.131"),
-                URLQueryItem(name: "access_token", value: "\(SingletonModel.instance.token)"),
+                URLQueryItem(name: "access_token", value: "\(UserToken.instance.token)"),
             ]
         }
 

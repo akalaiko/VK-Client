@@ -32,7 +32,7 @@ final class RealmService {
         return realm.objects(T.self)
     }
     
-    class func load<T: Object>(typeOf: T.Type) throws -> [T] {
+    class func load<T: Object>(type: T.Type) throws -> [T] {
         let realm = try Realm()
         return realm.objects(T.self).map { $0 }
     }

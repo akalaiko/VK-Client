@@ -8,23 +8,19 @@
 import UIKit
 import RealmSwift
 
-final class MyGroupsTVC: UITableViewController {
+final class MyGroupsTVC: UITableViewController, UISearchBarDelegate {
     
     @IBOutlet var myGroupsSearch: UISearchBar!
     
-    private var groupsToken: NotificationToken?
     private var groupsFiltered = [GroupRealm]()
     private let networkService = NetworkService<Group>()
     private var userGroups: Results<GroupRealm>? = try? RealmService.load(typeOf: GroupRealm.self)
+    private var groupsToken: NotificationToken?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         myGroupsSearch.delegate = self
-        tableView.register(UINib(
-            nibName: "MyGroupsCell",
-            bundle: nil),
-            forCellReuseIdentifier: "groupCell")
-        
+        tableView.register(MyGroupsCell.self)
         networkServiceFunction()
         sortGroups()
     }
@@ -46,30 +42,15 @@ final class MyGroupsTVC: UITableViewController {
         super.viewDidDisappear(animated)
         groupsToken?.invalidate()
     }
-    
-    @IBAction func addGroup(segue: UIStoryboardSegue) {
-        guard
-            segue.identifier == "addGroup",
-            let allGroupsController = segue.source as? AllGroupsTVC,
-            let groupIndexPath = allGroupsController.tableView.indexPathForSelectedRow
-        else { return }
-        let group = allGroupsController.allGroupsFiltered[groupIndexPath.row]
-        guard let existingGroup = userGroups?.filter("id == %@", group.id),
-              existingGroup.isEmpty
-        else { return }
-        let groupToRealm = GroupRealm(group: Group(id: group.id, name: group.name, avatar: group.avatar))
-        try? RealmService.add(item: groupToRealm)
-    }
 
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return groupsFiltered.count
+        groupsFiltered.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "groupCell", for: indexPath) as? MyGroupsCell
-        else { return UITableViewCell() }
+        let cell: MyGroupsCell = tableView.dequeueReusableCell(for: indexPath)
             
         let myGroup = groupsFiltered[indexPath.row]
 
@@ -82,8 +63,8 @@ final class MyGroupsTVC: UITableViewController {
     
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            let removeGroup = groupsFiltered.remove(at: indexPath.row)
-                    try? RealmService.delete(object: removeGroup)
+            try? RealmService.delete(object: groupsFiltered.remove(at: indexPath.row))
+            if groupsFiltered.isEmpty { myGroupsSearch.searchTextField.text = "" }
         }
     }
     
@@ -94,7 +75,7 @@ final class MyGroupsTVC: UITableViewController {
                 let realmGroup = myGroups.map { GroupRealm(group: $0) }
                 DispatchQueue.main.async {
                     do {
-                        try RealmService.save(items: realmGroup)
+                        try? RealmService.save(items: realmGroup)
                         self?.userGroups = try RealmService.load(typeOf: GroupRealm.self)
                     } catch {
                         print(error)
@@ -106,33 +87,34 @@ final class MyGroupsTVC: UITableViewController {
         }
     }
     
-    func sortGroups() {
-        guard let userGroups = userGroups else { return }
-        self.groupsFiltered.removeAll()
-        for group in userGroups {
-            groupsFiltered.append(group)
-            self.tableView.reloadData()
-        }
-    }
-}
-
-extension MyGroupsTVC: UISearchBarDelegate {
-
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard !searchText.isEmpty else {
-            sortGroups()
-            return
-        }
-
-        guard let userGroups = userGroups else { return }
+    func sortGroups(_ searchText: String? = "") {
+        guard let userGroups = userGroups,
+              let searchText = searchText else { return }
         groupsFiltered.removeAll()
-        for group in userGroups where group.name.lowercased().contains(searchText.lowercased()) {
-            groupsFiltered.append(group)
+        userGroups.forEach { group in
+            if !searchText.isEmpty {
+                if group.name.lowercased().contains(searchText.lowercased()) {
+                    groupsFiltered.append(group)
+                }
+            } else {
+                groupsFiltered.append(group)
+            }
         }
         tableView.reloadData()
     }
-
-    func searchBar (_ searchBar: UISearchBar) {
-        searchBar.searchTextField.text = ""
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        sortGroups(searchText)
+    }
+    
+    @IBAction func addGroup(segue: UIStoryboardSegue) {
+        guard segue.identifier == "addGroup",
+              let allGroupsController = segue.source as? AllGroupsTVC,
+              let groupIndexPath = allGroupsController.tableView.indexPathForSelectedRow
+        else { return }
+        let group = allGroupsController.allGroupsFiltered[groupIndexPath.row]
+        guard userGroups?.filter("id == %@", group.id).isEmpty == true else { return }
+            let groupToRealm = GroupRealm(group: Group(id: group.id, name: group.name, avatar: group.avatar))
+            try? RealmService.add(item: groupToRealm)
     }
 }

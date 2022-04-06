@@ -38,16 +38,14 @@ class FriendPage: UICollectionViewCell {
     }
     
     func configure (url: String) {
-        self.friendPhotoAlbumItem.isHidden = true
-        self.friendPhotoAlbumItem.image = nil
+
+        self.friendPhotoAlbumItem.image = UIImage(named: "default")
         self.friendPhotoAlbumItem.kf.setImage(
             with: URL(string: url),
             placeholder: UIImage(named: "default"),
             options: [.transition(.fade(0.2))])
         self.friendPhotoAlbumItem.contentMode = .scaleAspectFill
-        friendPhotoAlbumItem.isHidden = false
     }
-
 }
 
 
