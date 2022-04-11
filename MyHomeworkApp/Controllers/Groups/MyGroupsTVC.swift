@@ -13,34 +13,20 @@ final class MyGroupsTVC: UITableViewController, UISearchBarDelegate {
     @IBOutlet var myGroupsSearch: UISearchBar!
     
     private var groupsFiltered = [GroupRealm]()
-    private let networkService = NetworkService<Group>()
-    private var userGroups: Results<GroupRealm>? = try? RealmService.load(typeOf: GroupRealm.self)
-    private var groupsToken: NotificationToken?
+    private let groupsService = GroupsService.instance
+    private var userGroups = [GroupRealm]() {
+        didSet {
+            DispatchQueue.main.async {
+                self.sortGroups()
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         myGroupsSearch.delegate = self
         tableView.register(MyGroupsCell.self)
-        networkServiceFunction()
-        sortGroups()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        groupsToken = userGroups?.observe { [weak self] groupsChanges in
-            guard let self = self else { return }
-            switch groupsChanges {
-            case .initial, .update:
-                self.sortGroups()
-            case .error(let error):
-                print(error)
-            }
-        }
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        groupsToken?.invalidate()
+        groupsService.networkServiceFunction { items in self.userGroups = items }
     }
 
     // MARK: - Table view data source
@@ -51,13 +37,9 @@ final class MyGroupsTVC: UITableViewController, UISearchBarDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: MyGroupsCell = tableView.dequeueReusableCell(for: indexPath)
-            
         let myGroup = groupsFiltered[indexPath.row]
 
-        cell.configure(
-            name: myGroup.name,
-            url: myGroup.avatar)
-       
+        cell.configure(name: myGroup.name, url: myGroup.avatar)
         return cell
     }
     
@@ -68,38 +50,10 @@ final class MyGroupsTVC: UITableViewController, UISearchBarDelegate {
         }
     }
     
-    func networkServiceFunction() {
-        networkService.fetch(type: .groups) { [weak self] result in
-            switch result {
-            case .success(let myGroups):
-                let realmGroup = myGroups.map { GroupRealm(group: $0) }
-                DispatchQueue.main.async {
-                    do {
-                        try? RealmService.save(items: realmGroup)
-                        self?.userGroups = try RealmService.load(typeOf: GroupRealm.self)
-                    } catch {
-                        print(error)
-                    }
-                }
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-    
     func sortGroups(_ searchText: String? = "") {
-        guard let userGroups = userGroups,
-              let searchText = searchText else { return }
+        guard let searchText = searchText else { return }
         groupsFiltered.removeAll()
-        userGroups.forEach { group in
-            if !searchText.isEmpty {
-                if group.name.lowercased().contains(searchText.lowercased()) {
-                    groupsFiltered.append(group)
-                }
-            } else {
-                groupsFiltered.append(group)
-            }
-        }
+        groupsFiltered = searchText.isEmpty ? userGroups : userGroups.filter({ $0.name.lowercased().contains(searchText.lowercased()) })
         tableView.reloadData()
     }
     
@@ -113,8 +67,7 @@ final class MyGroupsTVC: UITableViewController, UISearchBarDelegate {
               let groupIndexPath = allGroupsController.tableView.indexPathForSelectedRow
         else { return }
         let group = allGroupsController.allGroupsFiltered[groupIndexPath.row]
-        guard userGroups?.filter("id == %@", group.id).isEmpty == true else { return }
-            let groupToRealm = GroupRealm(group: Group(id: group.id, name: group.name, avatar: group.avatar))
-            try? RealmService.add(item: groupToRealm)
+        guard userGroups.filter({$0.id == group.id}).isEmpty == true else { return }
+        userGroups.append(GroupRealm(group: group))
     }
 }

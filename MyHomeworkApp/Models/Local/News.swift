@@ -14,7 +14,7 @@ struct News {
     let sourceID: Int
     let date: Double
     var text: String?
-    let photosURLs: [Attachment]?
+    let attachment: [Attachment]?
     let likes: Likes
     let reposts: Reposts
     let comments: Comments
@@ -25,7 +25,7 @@ extension News: Decodable {
         case sourceID = "source_id"
         case date
         case text
-        case photosURLs = "attachments"
+        case attachment = "attachments"
         case comments
         case likes
         case reposts
@@ -52,9 +52,11 @@ struct Comments: Codable {
 
 struct Likes: Codable {
     let count: Int
+//    let userLikes: Int
 
     enum CodingKeys: String, CodingKey {
         case count
+//        case userLikes = "user_likes"
     }
 }
 

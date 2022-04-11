@@ -11,16 +11,17 @@ import RealmSwift
 final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     
     @IBOutlet var photo: UIImageView!
-    var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
+//    var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
+    var photos = [String]()
     var chosenPhotoIndex = Int()
     private var photoSubview = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let photos = photos else { return }
+//        guard let photos = photos else { return }
 
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
-        photo.kf.setImage(with: URL(string: photos[chosenPhotoIndex].url))
+        photo.kf.setImage(with: URL(string: photos[chosenPhotoIndex]))
 
         let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
             swipeRight.direction = .right
@@ -89,7 +90,7 @@ final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         switch side {
         case .right:
         photoSubview.center.x = photo.center.x * 2 + photoSubview.frame.size.width / 2
-           if chosenPhotoIndex + 1 < photos!.count {
+           if chosenPhotoIndex + 1 < photos.count {
                chosenPhotoIndex += 1
            } else {
                chosenPhotoIndex = 0
@@ -99,13 +100,13 @@ final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
            if chosenPhotoIndex - 1 >= 0 {
                chosenPhotoIndex -= 1
            } else {
-               chosenPhotoIndex = photos!.count - 1
+               chosenPhotoIndex = photos.count - 1
            }
         default:
             break
         }
-        guard let photos = photos else { return }
-        photoSubview.kf.setImage(with: URL(string: photos[chosenPhotoIndex].url))
+//        guard let photos = photos else { return }
+        photoSubview.kf.setImage(with: URL(string: photos[chosenPhotoIndex]))
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
         view.addSubview(photoSubview)
        }

@@ -69,7 +69,8 @@ final class FriendCVC: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell: FriendPage = collectionView.dequeueReusableCell(for: indexPath)
-        cell.configure(url: photos?[indexPath.row].url ?? "")
+        let photo = photos?[indexPath.row]
+        cell.configure(url: photo?.url ?? "", likes: photo?.likes ?? 0)
         return cell
     }
     
@@ -89,18 +90,20 @@ final class FriendCVC: UICollectionViewController {
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "showPhoto") as? LargePhoto {
-            vc.photos = photos!
+            var photoURLs = [String]()
+            self.photos?.forEach { i in photoURLs.append(i.url) }
+            vc.photos = photoURLs
             vc.chosenPhotoIndex = indexPath.row
-            self.navigationController?.pushViewController(vc, animated: false)
+            self.navigationController?.pushViewController(vc, animated: true)
         }
     }
     
     func networkServiceFunction() {
-        networkService.fetch(type: .photos, id: friend!.id){ [weak self] result in
+        networkService.fetch(type: .photos, id: friend?.id){ [weak self] result in
             switch result {
             case .success(let photos):
                 DispatchQueue.main.async {
-                    let photoRealm = photos.map { PhotoRealm(ownerID: self?.friend?.id ?? 0, photo: $0) }
+                    let photoRealm = photos.map { PhotoRealm(ownerID: self?.friend?.id ?? 0, photo: $0, likes: $0.likes?.count ?? 0) }
                     do {
                     try RealmService.save(items: photoRealm)
                         self?.photos = try RealmService.load(typeOf: PhotoRealm.self).filter("ownerID == %@", self?.friend?.id ?? "")

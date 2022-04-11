@@ -15,7 +15,20 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
             }
         }
     }
-    var photoURLs: [String] = []
+    var photoURLs: [String] {
+        var attachments = [String]()
+        attachments.removeAll()
+        currentNews?.attachment?.forEach { i in
+            if i.photo != nil {
+                guard let image = i.photo?.sizes.last?.url else { return }
+                attachments.append(image)
+            } else if i.video != nil {
+                guard let image = i.video?.image.last?.url else { return }
+                attachments.append(image)
+            } else { return }
+        }
+        return attachments
+    }
     var numberOfItems = CGFloat()
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -35,8 +48,24 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: newsImageCell = collectionView.dequeueReusableCell(for: indexPath)
-
-        cell.configure(url: photoURLs[indexPath.row])
+        let isVideo = currentNews?.attachment?[indexPath.row].video
+        
+        var photos = [String]()
+        photos.removeAll()
+        currentNews?.attachment?.forEach { i in
+            if i.photo != nil {
+                guard let image = i.photo?.sizes.last?.url else { return }
+                photos.append(image)
+            } else if i.video != nil {
+                guard let image = i.video?.image.last?.url else { return }
+                photos.append(image)
+            }
+            else {
+                return
+            }
+        }
+        
+        cell.configure(url: photoURLs[indexPath.row], video: isVideo == nil)
         return cell
     }
     

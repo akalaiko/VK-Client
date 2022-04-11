@@ -28,7 +28,7 @@
                                 </constraints>
                             </imageView>
                             <button opaque="NO" contentMode="center" contentHorizontalAlignment="center" contentVerticalAlignment="center" adjustsImageWhenHighlighted="NO" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GIp-3S-P6Q">
-                                <rect key="frame" x="65" y="79" width="26" height="19"/>
+                                <rect key="frame" x="70" y="79" width="25" height="19"/>
                                 <rect key="contentStretch" x="0.0" y="0.0" width="0.0" height="0.0"/>
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="plain" title="0" imagePadding="1">
@@ -36,7 +36,7 @@
                                     <preferredSymbolConfiguration key="preferredSymbolConfigurationForImage" configurationType="font" scale="small" weight="regular">
                                         <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                     </preferredSymbolConfiguration>
-                                    <fontDescription key="titleFontDescription" style="UICTFontTextStyleBody"/>
+                                    <fontDescription key="titleFontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                     <directionalEdgeInsets key="contentInsets" top="0.0" leading="0.0" bottom="2" trailing="2"/>
                                 </buttonConfiguration>
                                 <connections>
@@ -51,7 +51,7 @@
                             <constraint firstItem="8hb-3H-gij" firstAttribute="centerX" secondItem="m6M-Ox-68n" secondAttribute="centerX" id="N2e-5Y-ZLX"/>
                             <constraint firstItem="8hb-3H-gij" firstAttribute="centerY" secondItem="m6M-Ox-68n" secondAttribute="centerY" id="Rxz-sD-AhD"/>
                             <constraint firstItem="GIp-3S-P6Q" firstAttribute="bottom" secondItem="m6M-Ox-68n" secondAttribute="bottom" constant="-2" id="btj-Fm-dW8"/>
-                            <constraint firstItem="GIp-3S-P6Q" firstAttribute="leading" secondItem="m6M-Ox-68n" secondAttribute="trailing" constant="-35" id="kst-hy-lhh"/>
+                            <constraint firstItem="GIp-3S-P6Q" firstAttribute="trailing" secondItem="m6M-Ox-68n" secondAttribute="trailing" constant="-5" id="kst-hy-lhh"/>
                             <constraint firstAttribute="width" secondItem="m6M-Ox-68n" secondAttribute="height" multiplier="1:1" id="wRz-zb-Ma6"/>
                         </constraints>
                     </view>
@@ -73,7 +73,7 @@
         </collectionViewCell>
     </objects>
     <resources>
-        <image name="default" width="651" height="651"/>
+        <image name="default" width="325.5" height="325.5"/>
         <image name="heart" catalog="system" width="128" height="109"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>

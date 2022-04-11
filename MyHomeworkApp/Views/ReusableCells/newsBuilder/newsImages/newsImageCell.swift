@@ -10,8 +10,10 @@ import UIKit
 class newsImageCell: UICollectionViewCell,UIGestureRecognizerDelegate {
 
     @IBOutlet var newsImage: UIImageView?
+    @IBOutlet var videoPlayButton: UIImageView!
     
-    func configure(url: String) {
+    func configure(url: String, video: Bool) {
+        self.videoPlayButton.isHidden = video
         self.newsImage?.image = UIImage(named: "default")
         self.newsImage?.kf.setImage(
             with: URL(string: url),

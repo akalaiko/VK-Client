@@ -22,3 +22,9 @@ extension GroupRealm {
         self.avatar = group.avatar
     }
 }
+//
+//extension GroupRealm: Equatable {
+//    static func ==(lhs: GroupRealm, rhs: GroupRealm) -> Bool {
+//        return lhs.id == rhs.id
+//    }
+//}

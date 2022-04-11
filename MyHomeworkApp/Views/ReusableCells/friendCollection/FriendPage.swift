@@ -11,10 +11,10 @@ import Kingfisher
 class FriendPage: UICollectionViewCell {
 
     @IBOutlet var friendPhotoAlbumItem: UIImageView!
+    var likeCount = 0
     
     @IBOutlet var likeButton: UIButton!
     @IBAction func likeButtonPressed(_ sender: UIButton) {
-        let likeCount = 0
         
         sender.isSelected  = !sender.isSelected
         
@@ -37,7 +37,7 @@ class FriendPage: UICollectionViewCell {
         }
     }
     
-    func configure (url: String) {
+    func configure (url: String, likes: Int) {
 
         self.friendPhotoAlbumItem.image = UIImage(named: "default")
         self.friendPhotoAlbumItem.kf.setImage(
@@ -45,6 +45,11 @@ class FriendPage: UICollectionViewCell {
             placeholder: UIImage(named: "default"),
             options: [.transition(.fade(0.2))])
         self.friendPhotoAlbumItem.contentMode = .scaleAspectFill
+        self.likeCount = likes
+        self.likeButton.setTitle("\(likeCount)", for: .normal)
+        self.likeButton.backgroundColor = .white.withAlphaComponent(0.7)
+        self.likeButton.layer.cornerRadius = 5.0
+//        self.likeButton.backgroundColor.al
     }
 }
 
