@@ -45,7 +45,7 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
         switch indexPath.row {
         case Identifier.top.rawValue:
             let cell: newsTop = tableView.dequeueReusableCell(for: indexPath)
-            guard let source = feedService.getSource(news.sourceID) else { return cell}
+            guard let source = feedService.getSource(news.sourceID) else { return cell }
                 cell.configure(
                     url: source.0,
                     name: source.1,

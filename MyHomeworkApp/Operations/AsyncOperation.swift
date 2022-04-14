@@ -10,7 +10,7 @@ import Foundation
 class AsyncOperation: Operation {
     enum State: String {
         case ready, executing, finished
-        var keyPath: String { "is" + rawValue.capitalized }
+        var keyPath: String { return "is" + rawValue.capitalized }
     }
     
     var state = State.ready {
@@ -41,7 +41,12 @@ class AsyncOperation: Operation {
     }
     
     override func start() {
-        state = isCancelled ? .finished : .executing
+        if isCancelled {
+            state = .finished
+        } else {
+            main()
+            state = .executing
+        }
     }
     
     override func cancel() {

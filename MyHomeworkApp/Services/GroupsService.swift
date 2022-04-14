@@ -12,24 +12,25 @@ final class GroupsService {
     
     static let instance = GroupsService()
     private init() {}
-    private let networkService = NetworkService<Group>()
+    var groups = [GroupRealm]()
     
-    func networkServiceFunction(completion: @escaping ([GroupRealm]) -> Void){
-        networkService.fetch(type: .groups) { result in
-            switch result {
-            case .success(let myGroups):
-                    let items = myGroups.map { GroupRealm(group: $0) }
-                DispatchQueue.main.async {
-                    do {
-                        try RealmService.save(items: items)
-                    } catch {
-                        print(error)
-                    }
-                }
-                completion(items)
-            case .failure(let error):
-                print(error)
-            }
-        }
+    func getGroups(completion: @escaping ([GroupRealm]) -> Void) {
+        let fetchDataQueue: OperationQueue = {
+            let queue = OperationQueue()
+            queue.qualityOfService = .utility
+            return queue
+        }()
+        
+        let fetchData = FetchDataOperation()
+        let realmSave = RealmSaveOperation()
+        let realmLoad = RealmLoadOperation()
+        
+        realmSave.addDependency(fetchData)
+        realmLoad.addDependency(realmSave)
+        realmLoad.completionBlock = { completion(realmLoad.groups) }
+        
+        fetchDataQueue.addOperation(fetchData)
+        fetchDataQueue.addOperation(realmSave)
+        fetchDataQueue.addOperation(realmLoad)
     }
 }

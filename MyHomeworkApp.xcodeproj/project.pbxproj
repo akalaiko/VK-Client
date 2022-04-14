@@ -39,6 +39,9 @@
 		AF7F7AF827FE5E95006044A7 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AF727FE5E95006044A7 /* Video.swift */; };
 		AF7F7AFA2801AEA4006044A7 /* FriendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AF92801AEA4006044A7 /* FriendService.swift */; };
 		AF7F7AFC2801C330006044A7 /* GroupsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AFB2801C330006044A7 /* GroupsService.swift */; };
+		AF7F7B00280448E7006044A7 /* FetchDataOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AFD280448E7006044A7 /* FetchDataOperation.swift */; };
+		AF7F7B01280448E7006044A7 /* RealmLoadOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AFE280448E7006044A7 /* RealmLoadOperation.swift */; };
+		AF7F7B02280448E7006044A7 /* RealmSaveOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AFF280448E7006044A7 /* RealmSaveOperation.swift */; };
 		AF87FA9A277B8482004867DD /* FriendCVCHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF87FA98277B8482004867DD /* FriendCVCHeader.swift */; };
 		AF87FA9B277B8482004867DD /* FriendCVCHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = AF87FA99277B8482004867DD /* FriendCVCHeader.xib */; };
 		AF8E4F99276E0899007AD763 /* MyFriendsTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8E4F98276E0899007AD763 /* MyFriendsTVC.swift */; };
@@ -114,6 +117,9 @@
 		AF7F7AF727FE5E95006044A7 /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
 		AF7F7AF92801AEA4006044A7 /* FriendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendService.swift; sourceTree = "<group>"; };
 		AF7F7AFB2801C330006044A7 /* GroupsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsService.swift; sourceTree = "<group>"; };
+		AF7F7AFD280448E7006044A7 /* FetchDataOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchDataOperation.swift; sourceTree = "<group>"; };
+		AF7F7AFE280448E7006044A7 /* RealmLoadOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmLoadOperation.swift; sourceTree = "<group>"; };
+		AF7F7AFF280448E7006044A7 /* RealmSaveOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmSaveOperation.swift; sourceTree = "<group>"; };
 		AF87FA98277B8482004867DD /* FriendCVCHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendCVCHeader.swift; sourceTree = "<group>"; };
 		AF87FA99277B8482004867DD /* FriendCVCHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FriendCVCHeader.xib; sourceTree = "<group>"; };
 		AF8E4F98276E0899007AD763 /* MyFriendsTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyFriendsTVC.swift; sourceTree = "<group>"; };
@@ -281,8 +287,19 @@
 			isa = PBXGroup;
 			children = (
 				AF7F7AF327FDBE60006044A7 /* AsyncOperation.swift */,
+				AF7F7B03280868F8006044A7 /* Groups */,
 			);
 			path = Operations;
+			sourceTree = "<group>";
+		};
+		AF7F7B03280868F8006044A7 /* Groups */ = {
+			isa = PBXGroup;
+			children = (
+				AF7F7AFD280448E7006044A7 /* FetchDataOperation.swift */,
+				AF7F7AFF280448E7006044A7 /* RealmSaveOperation.swift */,
+				AF7F7AFE280448E7006044A7 /* RealmLoadOperation.swift */,
+			);
+			path = Groups;
 			sourceTree = "<group>";
 		};
 		AFA10B6027A0F65500258EE0 /* Extensions */ = {
@@ -522,6 +539,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AF7F7B00280448E7006044A7 /* FetchDataOperation.swift in Sources */,
 				AF47891927A820DD005FBD6F /* newsImageCell.swift in Sources */,
 				AF7F7AF427FDBE60006044A7 /* AsyncOperation.swift in Sources */,
 				AF5B421E27DF82BF00865EF0 /* RealmService.swift in Sources */,
@@ -537,11 +555,13 @@
 				AF186F6C276E0B2200B4E778 /* AllGroupsTVC.swift in Sources */,
 				AF7538C727B7376A006A2E63 /* UserToken.swift in Sources */,
 				AF1C4958277767C40098DCEB /* configAvatar.swift in Sources */,
+				AF7F7B01280448E7006044A7 /* RealmLoadOperation.swift in Sources */,
 				AF91537527F3831300CC7210 /* Response + Items.swift in Sources */,
 				AFE0BEE82798D24C00068B94 /* newsBottom.swift in Sources */,
 				AFB7577C276A300100376A38 /* LoginViewController.swift in Sources */,
 				AF5B421C27DF80EA00865EF0 /* GroupRealm.swift in Sources */,
 				AF7F7AF827FE5E95006044A7 /* Video.swift in Sources */,
+				AF7F7B02280448E7006044A7 /* RealmSaveOperation.swift in Sources */,
 				AFA10B5D27A075AB00258EE0 /* LargePhoto.swift in Sources */,
 				AF91537327F3627700CC7210 /* News.swift in Sources */,
 				AF8E4F9B276E08D7007AD763 /* MyGroupsTVC.swift in Sources */,
