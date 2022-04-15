@@ -28,7 +28,16 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
         searchBar.delegate = self
         tableView.sectionHeaderTopPadding = 0
         tableView.register(MyFriendCell.self)
-        friendService.networkServiceFunction { items in self.friends = items }
+        
+        friendService.getFriends()
+            .then(on: .global(), friendService.getParsedData(data:))
+            .then(friendService.usersRealmInOut(users:))
+            .done(on: .main) { result in
+                self.friends = result
+            }
+            .catch { error in
+                print(error)
+            }
     }
 
 // MARK: - Table view data source

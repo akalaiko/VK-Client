@@ -6,5 +6,6 @@ target 'MyHomeworkApp' do
 
 pod 'RealmSwift'
 pod 'Kingfisher'
+pod 'PromiseKit'
 
 end
