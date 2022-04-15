@@ -12,12 +12,10 @@ class newsImageCell: UICollectionViewCell,UIGestureRecognizerDelegate {
     @IBOutlet var newsImage: UIImageView?
     @IBOutlet var videoPlayButton: UIImageView!
     
-    func configure(url: String, video: Bool) {
+    func configure(image: UIImage?, video: Bool) {
         self.videoPlayButton.isHidden = video
         self.newsImage?.image = UIImage(named: "default")
-        self.newsImage?.kf.setImage(
-            with: URL(string: url),
-            placeholder: UIImage(named: "default"))
+        self.newsImage?.image = image
         self.newsImage?.contentMode = .scaleAspectFit
     }
 }

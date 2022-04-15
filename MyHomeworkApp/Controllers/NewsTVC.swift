@@ -21,6 +21,7 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
         }
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.sectionHeaderTopPadding = 0

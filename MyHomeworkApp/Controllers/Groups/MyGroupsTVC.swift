@@ -24,7 +24,7 @@ final class MyGroupsTVC: UITableViewController, UISearchBarDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        try? RealmService.clear()
+        try? RealmService.clear()
         myGroupsSearch.delegate = self
         tableView.register(MyGroupsCell.self)
         groupsService.getGroups{ items in self.userGroups = items }

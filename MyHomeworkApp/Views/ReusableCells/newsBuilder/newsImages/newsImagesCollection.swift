@@ -15,6 +15,7 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
             }
         }
     }
+    private var imageService: PhotoService?
     var photoURLs: [String] {
         var attachments = [String]()
         attachments.removeAll()
@@ -35,6 +36,7 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
         super.setSelected(selected, animated: animated)
         collectionView.delegate = self
         collectionView.dataSource = self
+        imageService = PhotoService(container: collectionView)
         
         numberOfItems = CGFloat(photoURLs.count)
         configureLayout()
@@ -49,23 +51,9 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: newsImageCell = collectionView.dequeueReusableCell(for: indexPath)
         let isVideo = currentNews?.attachment?[indexPath.row].video
-        
-        var photos = [String]()
-        photos.removeAll()
-        currentNews?.attachment?.forEach { i in
-            if i.photo != nil {
-                guard let image = i.photo?.sizes.last?.url else { return }
-                photos.append(image)
-            } else if i.video != nil {
-                guard let image = i.video?.image.last?.url else { return }
-                photos.append(image)
-            }
-            else {
-                return
-            }
-        }
-        
-        cell.configure(url: photoURLs[indexPath.row], video: isVideo == nil)
+
+        let image = imageService?.photo(atIndexPath: indexPath, byUrl: photoURLs[indexPath.row])
+        cell.configure(image: image, video: isVideo == nil)
         return cell
     }
     
