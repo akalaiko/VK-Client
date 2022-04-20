@@ -42,8 +42,8 @@ final class VKLoginVC: UIViewController {
         components.host = "oauth.vk.com"
         components.path = "/authorize"
         components.queryItems = [
-//            URLQueryItem(name: "client_id", value: "8081428"),
-            URLQueryItem(name: "client_id", value: "8077898"),
+            URLQueryItem(name: "client_id", value: "8081428"),
+//            URLQueryItem(name: "client_id", value: "8077898"),
             URLQueryItem(name: "display", value: "mobile"),
             URLQueryItem(name: "redirect_uri", value: "https://oauth.vk.com/blank.html"),
             URLQueryItem(name: "scope", value: "336918"),
@@ -87,7 +87,7 @@ extension VKLoginVC: WKNavigationDelegate {
             UserToken.instance.token = token
             UserToken.instance.userID = userID
             
-            let vc = storyboard?.instantiateViewController(withIdentifier: "main") as? UITabBarController
+            let vc = storyboard?.instantiateViewController(withIdentifier: "LoginViewController") as? LoginViewController
             vc?.modalPresentationStyle = .fullScreen
             self.present(vc ?? UIViewController(), animated: true, completion: nil)
             decisionHandler(.cancel)

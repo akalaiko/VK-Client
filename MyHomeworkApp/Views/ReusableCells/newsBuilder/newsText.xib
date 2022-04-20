@@ -16,11 +16,17 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="55"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" numberOfLines="5" baselineAdjustment="alignBaselines" showsExpansionTextWhenTruncated="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Kr-uh-mj7">
+                    <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="wordWrap" numberOfLines="30" baselineAdjustment="alignBaselines" showsExpansionTextWhenTruncated="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0Kr-uh-mj7">
                         <rect key="frame" x="20" y="10" width="280" height="35"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <nil key="textColor"/>
                         <nil key="highlightedColor"/>
+                        <size key="shadowOffset" width="0.0" height="0.0"/>
+                        <userDefinedRuntimeAttributes>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="shouldExpand" value="YES"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="shouldCollapse" value="YES"/>
+                            <userDefinedRuntimeAttribute type="boolean" keyPath="collapsed" value="YES"/>
+                        </userDefinedRuntimeAttributes>
                     </label>
                 </subviews>
                 <constraints>
@@ -28,12 +34,11 @@
                     <constraint firstAttribute="bottom" secondItem="0Kr-uh-mj7" secondAttribute="bottom" constant="10" id="dz6-Vf-UaM"/>
                     <constraint firstItem="0Kr-uh-mj7" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="20" id="uoN-vJ-5Mo"/>
                     <constraint firstItem="0Kr-uh-mj7" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="10" id="wF0-zL-ojp"/>
-                    <constraint firstItem="0Kr-uh-mj7" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="yXp-Nt-Cre"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="newsText" destination="0Kr-uh-mj7" id="iQ9-hQ-g7k"/>
+                <outlet property="newsText" destination="0Kr-uh-mj7" id="4dH-Nc-WZm"/>
             </connections>
             <point key="canvasLocation" x="137.68115942028987" y="92.075892857142847"/>
         </tableViewCell>

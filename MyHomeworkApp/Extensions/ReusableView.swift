@@ -13,9 +13,7 @@ protocol ReusableView {
 }
 
 extension ReusableView {
-    static var reuseIdentifier: String {
-        return String(describing: self)
-    }
+    static var reuseIdentifier: String { String(describing: self) }
 }
 
 extension UITableViewCell: ReusableView {}

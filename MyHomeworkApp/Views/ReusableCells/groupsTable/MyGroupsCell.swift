@@ -12,11 +12,10 @@ class MyGroupsCell: UITableViewCell {
     @IBOutlet var groupName: UILabel!
 
     func configure(name: String, url: String) {
-        self.groupAvatar.image = UIImage(named: "default")
+        self.groupAvatar.image = nil
         self.groupAvatar.kf.setImage(
             with: URL(string: url),
             placeholder: UIImage(named: "default"))
         self.groupName.text = name
     }
-    
 }

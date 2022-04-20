@@ -23,7 +23,7 @@ extension Group: Codable {
 }
 
 extension Group: Equatable {
-    static func ==(lhs: Group, rhs: Group) -> Bool {
+    static func == (lhs: Group, rhs: Group) -> Bool {
         return lhs.name == rhs.name
     }
 }

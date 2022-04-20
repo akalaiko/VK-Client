@@ -25,7 +25,9 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.sectionHeaderTopPadding = 0
-    
+        tableView.dataSource = self
+        tableView.delegate = self
+        
         tableView.register(newsTop.self)
         tableView.register(newsText.self)
         tableView.register(newsImagesCollection.self)
@@ -57,6 +59,8 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
             let cell: newsText = tableView.dequeueReusableCell(for: indexPath)
             cell.configure(text: news.text ?? "")
             cell.isHidden = news.text == ""
+            cell.selectionStyle = .none
+            
             return cell
             
         case Identifier.image.rawValue:
@@ -68,9 +72,9 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
             let cell: newsBottom = tableView.dequeueReusableCell(for: indexPath)
             cell.configure(
                 isLiked: false,
-                likesCounter: news.likes.count,
-                commentCounter: news.comments.count,
-                shareCounter: news.reposts.count)
+                likesCounter: news.likes?.count ?? 0,
+                commentCounter: news.comments?.count ?? 0,
+                shareCounter: news.reposts?.count ?? 0)
             return cell
         default:
             return UITableViewCell()

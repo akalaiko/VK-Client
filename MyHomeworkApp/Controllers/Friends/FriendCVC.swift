@@ -12,7 +12,7 @@ final class FriendCVC: UICollectionViewController {
     
     var friend: UserRealm?
     private let networkService = NetworkService<Photos>()
-    private var photos: Results<PhotoRealm>? {
+    private var photos: [PhotoRealm]? {
         didSet {
             self.collectionView.reloadData()
         }
@@ -31,27 +31,11 @@ final class FriendCVC: UICollectionViewController {
         networkServiceFunction()
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        photosToken = photos?.observe { [weak self] photosChanges in
-            guard let self = self else { return }
-            switch photosChanges {
-            case .initial, .update:
-                self.collectionView.reloadData()
-            case .error(let error):
-                print(error)
-            }
-        }
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        photosToken?.invalidate()
-    }
-
     // MARK: UICollectionViewDataSource
 
-    override func numberOfSections(in collectionView: UICollectionView) -> Int { 1 }
+    override func numberOfSections(in collectionView: UICollectionView) -> Int {
+        print("we are counting sections")
+        return 1 }
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { photos?.count ?? 0 }
     
@@ -106,8 +90,7 @@ final class FriendCVC: UICollectionViewController {
                     let photoRealm = photos.map { PhotoRealm(ownerID: self?.friend?.id ?? 0, photo: $0, likes: $0.likes?.count ?? 0) }
                     do {
                     try RealmService.save(items: photoRealm)
-                        self?.photos = try RealmService.load(typeOf: PhotoRealm.self).filter("ownerID == %@", self?.friend?.id ?? "")
-                    self?.collectionView.reloadData()
+                        self?.photos = try RealmService.load(type: PhotoRealm.self).filter({$0.ownerID == self?.friend?.id})
                     } catch {
                         print(error)
                     }

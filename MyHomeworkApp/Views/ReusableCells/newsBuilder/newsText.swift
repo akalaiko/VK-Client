@@ -9,9 +9,9 @@ import UIKit
 
 class newsText: UITableViewCell {
 
-    @IBOutlet var newsText: UILabel?
+    @IBOutlet var newsText: UILabel!
     
     func configure(text: String) {
-        self.newsText?.text = text
+        self.newsText.text = text
     }
 }

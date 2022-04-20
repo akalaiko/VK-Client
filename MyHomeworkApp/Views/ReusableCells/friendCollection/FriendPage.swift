@@ -49,7 +49,6 @@ class FriendPage: UICollectionViewCell {
         self.likeButton.setTitle("\(likeCount)", for: .normal)
         self.likeButton.backgroundColor = .white.withAlphaComponent(0.7)
         self.likeButton.layer.cornerRadius = 5.0
-//        self.likeButton.backgroundColor.al
     }
 }
 

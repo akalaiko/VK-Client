@@ -12,17 +12,21 @@ import Foundation
 struct News {
     
     let sourceID: Int
+    var avatarURL: String?
+    var creatorName: String?
     let date: Double
     var text: String?
     let attachment: [Attachment]?
-    let likes: Likes
-    let reposts: Reposts
-    let comments: Comments
+    let likes: Likes?
+    let reposts: Reposts?
+    let comments: Comments?
 }
 
 extension News: Decodable {
     enum CodingKeys: String, CodingKey {
         case sourceID = "source_id"
+        case avatarURL
+        case creatorName
         case date
         case text
         case attachment = "attachments"
@@ -52,17 +56,11 @@ struct Comments: Codable {
 
 struct Likes: Codable {
     let count: Int
-//    let userLikes: Int
 
     enum CodingKeys: String, CodingKey {
         case count
-//        case userLikes = "user_likes"
     }
 }
-
-//struct Views: Codable {
-//    let count: Int
-//}
 
 struct Reposts: Codable {
     let count: Int

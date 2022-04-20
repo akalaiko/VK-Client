@@ -56,8 +56,8 @@ final class FeedsService {
 
     func loadUserByID(_ id: Int) -> User? {
         do {
-            let realmGroups: [UserRealm] = try RealmService.load(type: UserRealm.self)
-        guard let user = realmGroups.filter({ $0.id == id }).first  else { return nil }
+            let realmUsers: [UserRealm] = try RealmService.load(type: UserRealm.self)
+        guard let user = realmUsers.filter({ $0.id == id }).first  else { return nil }
             return User(id: user.id, firstName: user.firstName, lastName: user.lastName, photo: user.photo, photoBig: user.photoBig, sex: user.sex)
         } catch {
             print(error)

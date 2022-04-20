@@ -8,14 +8,14 @@
 import UIKit
 import RealmSwift
 
-final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
+final class MyFriendsTVC: UITableViewController {
     @IBOutlet var searchBar: UISearchBar!
     
     private var friendsDictionary = [String: [UserRealm]]()
     private var friendsSectionTitles = [String]()
     private var friendsFilteredDictionary = [String: [UserRealm]]()
     private let friendService = FriendService.instance
-    private var friends = [UserRealm]() {
+    var friends: [UserRealm]? {
         didSet {
             DispatchQueue.main.async {
                 self.sortFriends()
@@ -25,30 +25,18 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        friends = try? RealmService.load(type: UserRealm.self)
         searchBar.delegate = self
         tableView.sectionHeaderTopPadding = 0
         tableView.register(MyFriendCell.self)
-        
-        friendService.getFriends()
-            .then(on: .global(), friendService.getParsedData(data:))
-            .then(friendService.usersRealmInOut(users:))
-            .done(on: .main) { result in
-                self.friends = result
-            }
-            .catch { error in
-                print(error)
-            }
     }
 
 // MARK: - Table view data source
 
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        friendsSectionTitles.count 
-    }
+    override func numberOfSections(in tableView: UITableView) -> Int { friendsSectionTitles.count }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let rows = friendsFilteredDictionary[friendsSectionTitles[section]]?.count else { return 0 }
-        return rows
+        friendsFilteredDictionary[friendsSectionTitles[section]]?.count ?? 0
     }
     
     override func sectionIndexTitles(for tableView: UITableView) -> [String]? {
@@ -59,11 +47,6 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
 
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         friendsSectionTitles[section]
-    }
-    
-    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
-        let header = view as? UITableViewHeaderFooterView
-        header?.tintColor = UIColor.gray.withAlphaComponent(0.05)
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -77,6 +60,7 @@ final class MyFriendsTVC: UITableViewController, UIGestureRecognizerDelegate {
     }
     
     func sortFriends() {
+        guard let friends = friends else { return }
         for friend in friends where friend.firstName != "DELETED" {
             friendsDictionary.removeAll()
 

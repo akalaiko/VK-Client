@@ -11,14 +11,12 @@ import RealmSwift
 final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     
     @IBOutlet var photo: UIImageView!
-//    var photos: Results<PhotoRealm>? = try? RealmService.load(typeOf: PhotoRealm.self)
     var photos = [String]()
     var chosenPhotoIndex = Int()
     private var photoSubview = UIImageView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        guard let photos = photos else { return }
 
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
         photo.kf.setImage(with: URL(string: photos[chosenPhotoIndex]))
@@ -105,7 +103,6 @@ final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         default:
             break
         }
-//        guard let photos = photos else { return }
         photoSubview.kf.setImage(with: URL(string: photos[chosenPhotoIndex]))
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
         view.addSubview(photoSubview)

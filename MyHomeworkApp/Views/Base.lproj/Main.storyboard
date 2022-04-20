@@ -114,92 +114,20 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" keyboardDismissMode="onDrag" translatesAutoresizingMaskIntoConstraints="NO" id="Gia-JZ-YEu">
-                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                                <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="VK.com-logo.svg" translatesAutoresizingMaskIntoConstraints="NO" id="aKf-B6-bc8">
-                                        <rect key="frame" x="169.5" y="100" width="75" height="75"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="75" id="Sqc-KO-a3c"/>
-                                            <constraint firstAttribute="width" constant="75" id="yF1-tt-et7"/>
-                                        </constraints>
-                                    </imageView>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="aOf-Ya-gAG">
-                                        <rect key="frame" x="103.5" y="215" width="207" height="166"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Username" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rRs-mG-sfA">
-                                                <rect key="frame" x="0.0" y="0.0" width="207" height="26.5"/>
-                                                <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="22"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <textField opaque="NO" contentMode="scaleToFill" highlighted="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter username" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="Cd1-kH-DHc">
-                                                <rect key="frame" x="0.0" y="41.5" width="207" height="34"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
-                                            </textField>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Password" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fne-iU-5uC">
-                                                <rect key="frame" x="0.0" y="90.5" width="207" height="26.5"/>
-                                                <fontDescription key="fontDescription" name="HelveticaNeue-Medium" family="Helvetica Neue" pointSize="22"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                            <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Enter password" textAlignment="center" minimumFontSize="17" clearButtonMode="whileEditing" translatesAutoresizingMaskIntoConstraints="NO" id="vJi-cd-nqx">
-                                                <rect key="frame" x="0.0" y="132" width="207" height="34"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" secureTextEntry="YES" textContentType="password"/>
-                                            </textField>
-                                        </subviews>
-                                    </stackView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dsp-iL-QnB">
-                                        <rect key="frame" x="174.5" y="426" width="65.5" height="33.5"/>
-                                        <buttonConfiguration key="configuration" style="filled">
-                                            <attributedString key="attributedTitle">
-                                                <fragment content="Login">
-                                                    <attributes>
-                                                        <font key="NSFont" size="16" name="HelveticaNeue-Medium"/>
-                                                    </attributes>
-                                                </fragment>
-                                            </attributedString>
-                                        </buttonConfiguration>
-                                        <connections>
-                                            <action selector="loginButtonPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="slB-UK-tPo"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <constraints>
-                                    <constraint firstItem="aOf-Ya-gAG" firstAttribute="top" secondItem="aKf-B6-bc8" secondAttribute="bottom" constant="40" id="9Iq-Gn-c5k"/>
-                                    <constraint firstItem="aKf-B6-bc8" firstAttribute="top" secondItem="Gia-JZ-YEu" secondAttribute="top" constant="100" id="C2a-Bj-fKp"/>
-                                    <constraint firstItem="aOf-Ya-gAG" firstAttribute="centerX" secondItem="Gia-JZ-YEu" secondAttribute="centerX" id="Hnq-T2-GlS"/>
-                                    <constraint firstItem="dsp-iL-QnB" firstAttribute="top" secondItem="vJi-cd-nqx" secondAttribute="bottom" constant="45" id="KtZ-Ge-6Ss"/>
-                                    <constraint firstAttribute="bottom" secondItem="dsp-iL-QnB" secondAttribute="bottom" constant="25" id="MPV-MZ-0vH"/>
-                                    <constraint firstItem="Cd1-kH-DHc" firstAttribute="width" secondItem="Gia-JZ-YEu" secondAttribute="width" multiplier="0.5" id="Olh-9F-tVM"/>
-                                    <constraint firstItem="aKf-B6-bc8" firstAttribute="centerX" secondItem="Gia-JZ-YEu" secondAttribute="centerX" id="P1D-1N-95D"/>
-                                    <constraint firstItem="vJi-cd-nqx" firstAttribute="centerX" secondItem="Gia-JZ-YEu" secondAttribute="centerX" id="Qfj-4A-Ffb"/>
-                                    <constraint firstItem="rRs-mG-sfA" firstAttribute="centerX" secondItem="Gia-JZ-YEu" secondAttribute="centerX" id="ZbF-5b-75C"/>
-                                    <constraint firstItem="vJi-cd-nqx" firstAttribute="width" secondItem="Gia-JZ-YEu" secondAttribute="width" multiplier="0.5" id="jNy-DU-fYg"/>
-                                    <constraint firstItem="dsp-iL-QnB" firstAttribute="centerX" secondItem="Gia-JZ-YEu" secondAttribute="centerX" id="k3P-II-cee"/>
-                                    <constraint firstItem="Cd1-kH-DHc" firstAttribute="centerX" secondItem="Gia-JZ-YEu" secondAttribute="centerX" id="mrs-R7-F2d"/>
-                                    <constraint firstAttribute="trailing" secondItem="aOf-Ya-gAG" secondAttribute="trailing" constant="25" id="zjD-uy-WFe"/>
-                                </constraints>
-                                <viewLayoutGuide key="contentLayoutGuide" id="Wbc-UK-9rH"/>
-                                <viewLayoutGuide key="frameLayoutGuide" id="hlO-X0-j4e"/>
-                            </scrollView>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="ugi-Ll-vhJ">
+                                <rect key="frame" x="197" y="465" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Gia-JZ-YEu" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="0YU-kD-y0f"/>
-                            <constraint firstItem="Gia-JZ-YEu" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="NYa-p5-Jws"/>
-                            <constraint firstAttribute="bottom" secondItem="Gia-JZ-YEu" secondAttribute="bottom" id="mv4-dB-pN3"/>
-                            <constraint firstAttribute="trailing" secondItem="Gia-JZ-YEu" secondAttribute="trailing" id="s9M-zU-GKV"/>
+                            <constraint firstItem="ugi-Ll-vhJ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="27" id="k7s-ZJ-44J"/>
+                            <constraint firstItem="ugi-Ll-vhJ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="mbv-FE-tF7"/>
                         </constraints>
                     </view>
                     <splitViewMasterSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
                     <connections>
-                        <outlet property="passwordTextField" destination="vJi-cd-nqx" id="usJ-vY-ph5"/>
-                        <outlet property="scrollView" destination="Gia-JZ-YEu" id="uf4-g0-Cij"/>
-                        <outlet property="usernameTextField" destination="Cd1-kH-DHc" id="zn9-rq-Ln0"/>
+                        <outlet property="loadingIndicator" destination="ugi-Ll-vhJ" id="4yG-Xh-bBk"/>
                         <segue destination="4fQ-JD-TIC" kind="presentation" identifier="goToMain" modalPresentationStyle="fullScreen" modalTransitionStyle="flipHorizontal" id="55h-0P-8yG"/>
                     </connections>
                 </viewController>
@@ -211,7 +139,7 @@
         <scene sceneID="VjL-A8-IM8">
             <objects>
                 <tableViewController automaticallyAdjustsScrollViewInsets="NO" id="ZTc-bq-mBU" customClass="MyFriendsTVC" customModule="MyHomeworkApp" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="WRo-GW-JXz">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="WRo-GW-JXz">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -226,10 +154,10 @@
                         </searchBar>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="friendPrototype" id="NlG-fb-CC0">
-                                <rect key="frame" x="0.0" y="95.5" width="414" height="43.5"/>
+                                <rect key="frame" x="0.0" y="95.5" width="414" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="NlG-fb-CC0" id="8RC-t3-NU9">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
                             </tableViewCell>
@@ -303,7 +231,7 @@
         <!--News-->
         <scene sceneID="qrB-BI-SzL">
             <objects>
-                <tableViewController storyboardIdentifier="news" title="News" id="cVT-2M-1Wv" customClass="NewsTVC" customModule="MyHomeworkApp" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="News" id="cVT-2M-1Wv" customClass="NewsTVC" customModule="MyHomeworkApp" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="Jpu-F2-eba">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -365,7 +293,7 @@
         <scene sceneID="e26-jQ-2zC">
             <objects>
                 <tableViewController id="Xo0-bI-PcR" customClass="MyGroupsTVC" customModule="MyHomeworkApp" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="LId-ts-F4P">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" bouncesZoom="NO" keyboardDismissMode="interactive" dataMode="prototypes" style="plain" sectionIndexMinimumDisplayRowCount="1" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="LId-ts-F4P">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -405,6 +333,7 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="myGroupsSearch" destination="Bq3-wO-Xo0" id="ftH-4G-WGb"/>
                     </connections>
@@ -417,7 +346,7 @@
         <!--Friends-->
         <scene sceneID="7Jj-B8-Rtn">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="1Jv-aO-GRr" customClass="CustomNavController" customModule="MyHomeworkApp" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="friends" automaticallyAdjustsScrollViewInsets="NO" id="1Jv-aO-GRr" customClass="CustomNavController" customModule="MyHomeworkApp" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Friends" id="lQo-Rh-5tQ">
                         <imageReference key="image" image="person.3" catalog="system" symbolScale="large"/>
                         <imageReference key="landscapeImage" image="person.3" catalog="system" symbolScale="large"/>
@@ -447,7 +376,7 @@
         <!--Groups-->
         <scene sceneID="vg8-Np-6IX">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="GIM-In-wXs" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="groups" automaticallyAdjustsScrollViewInsets="NO" id="GIM-In-wXs" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Groups" id="uvF-aA-hKe">
                         <imageReference key="image" image="rectangle.3.group.bubble.left" catalog="system" symbolScale="large"/>
                         <imageReference key="landscapeImage" image="rectangle.3.group.bubble.left" catalog="system" symbolScale="large"/>
@@ -485,8 +414,8 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                     <connections>
-                        <segue destination="GIM-In-wXs" kind="relationship" relationship="viewControllers" id="GVX-L4-d8T"/>
                         <segue destination="wRe-4H-G3Y" kind="relationship" relationship="viewControllers" id="9Jo-bb-ZNP"/>
+                        <segue destination="GIM-In-wXs" kind="relationship" relationship="viewControllers" id="GVX-L4-d8T"/>
                         <segue destination="1Jv-aO-GRr" kind="relationship" relationship="viewControllers" id="gMZ-6o-bN6"/>
                     </connections>
                 </tabBarController>
@@ -497,7 +426,7 @@
         <!--News-->
         <scene sceneID="QmL-BX-6Qv">
             <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="wRe-4H-G3Y" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="news" automaticallyAdjustsScrollViewInsets="NO" id="wRe-4H-G3Y" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="News" image="newspaper" catalog="system" id="lUq-Ga-OgH"/>
                     <toolbarItems/>
                     <nil key="simulatedBottomBarMetrics"/>
@@ -517,7 +446,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="VK.com-logo.svg" width="2048" height="2048"/>
         <image name="newspaper" catalog="system" width="128" height="111"/>
         <image name="person.3" catalog="system" width="128" height="62"/>
         <image name="rectangle.3.group.bubble.left" catalog="system" width="128" height="110"/>
