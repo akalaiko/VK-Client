@@ -28,7 +28,7 @@ final class NetworkService<ItemsType: Decodable>  {
         return constructor
     }()
     
-    func fetch(type: requestType, q: String? = "", id: Int? = 0, completion: @escaping (Result<[ItemsType], Error>) -> Void) {
+    func fetch(type: requestType, q: String? = "", id: Int? = 0, nextFrom: String? = "", completion: @escaping (Result<[ItemsType], Error>) -> Void) {
         var constructor = urlConstructor
         switch type {
         case .friends:
@@ -60,7 +60,7 @@ final class NetworkService<ItemsType: Decodable>  {
         case .photos:
             constructor.path = "/method/photos.get"
             constructor.queryItems = [
-                URLQueryItem(name: "owner_id", value: "\(id!)"),
+                URLQueryItem(name: "owner_id", value: "\(id ?? 0)"),
                 URLQueryItem(name: "album_id", value: "profile"),
                 URLQueryItem(name: "rev", value: "1"),
                 URLQueryItem(name: "photo_sizes", value: "0"),
@@ -71,8 +71,10 @@ final class NetworkService<ItemsType: Decodable>  {
         case .feed:
             constructor.path = "/method/newsfeed.get"
             constructor.queryItems = [
-                URLQueryItem(name: "filters", value: "post,photo"),
+                URLQueryItem(name: "filters", value: "post, photo"),
+                URLQueryItem(name: "start_from", value: nextFrom),
                 URLQueryItem(name: "max_photos", value: "9"),
+                URLQueryItem(name: "count", value: "50"),
                 URLQueryItem(name: "source_ids", value: "friends,groups,pages"),
                 URLQueryItem(name: "v", value: "5.131"),
                 URLQueryItem(name: "access_token", value: "\(UserToken.instance.token)"),
@@ -88,6 +90,7 @@ final class NetworkService<ItemsType: Decodable>  {
             else { return }
             do{
                 let json = try JSONDecoder().decode(Response<ItemsType>.self, from: data)
+                if type == .feed { NewsTVC.nextFrom = json.response.nextFrom ?? ""}
                 completion(.success(json.response.items))
             } catch {
                 print(error)

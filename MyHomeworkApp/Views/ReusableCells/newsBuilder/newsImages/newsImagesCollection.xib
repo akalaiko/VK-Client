@@ -22,8 +22,8 @@
                         <constraints>
                             <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="2:1" id="SJk-ri-tIM"/>
                             <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="1:1" id="Tmr-Sp-wd7"/>
-                            <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="3:1" priority="998" id="bDk-qi-HLI"/>
-                            <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="3:2" priority="997" id="cTf-6N-nLg"/>
+                            <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="3:1" id="bDk-qi-HLI"/>
+                            <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="3:2" priority="999" id="cTf-6N-nLg"/>
                         </constraints>
                         <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="fVP-cn-hpX">
                             <size key="itemSize" width="128" height="128"/>

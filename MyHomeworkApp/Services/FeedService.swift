@@ -15,15 +15,16 @@ final class FeedsService {
     let networkService = NetworkService<News>()
     var userNews = [News]()
     
-    func getFeeds(completion: @escaping () -> Void) {
-        networkServiceFunction { feeds in
+    func getFeeds(nextFrom: String? = "", completion: @escaping () -> Void) {
+        networkServiceFunction(nextFrom: nextFrom) { feeds in
+            self.userNews = []
             self.userNews = feeds
             self.userNews = self.userNews.filter({$0.attachment != nil})
             completion()
         }
     }
-    func networkServiceFunction(completion: @escaping ([News]) -> Void){
-        networkService.fetch(type: .feed) { result in
+    func networkServiceFunction(nextFrom: String? = "", completion: @escaping ([News]) -> Void){
+        networkService.fetch(type: .feed, nextFrom: nextFrom) { result in
             switch result {
             case .failure(let error):
                 print(error)

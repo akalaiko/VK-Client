@@ -64,19 +64,18 @@ class PhotoService {
         AF.request(url).responseData(queue: .global(qos: .userInteractive)) { [weak self] response in
             guard let data = response.data,
                   let image = UIImage(data: data) else { return }
-
-            self?.saveImageToCache(url: url, image: image)
             
             DispatchQueue.main.async {
-                self?.container.reloadRow(atIndexPath: indexPath)
+                self?.saveImageToCache(url: url, image: image)
                 self?.images[url] = image
+                self?.container.reloadRow(atIndexPath: indexPath)
             }
         }
     }
     
     private func saveImageToCache(url: String, image: UIImage) {
         guard let fileName = getFilePath(url: url),
-              let data = image.pngData() else { return }
+              let data = image.jpegData(compressionQuality: 0.5) else { return }
 
         FileManager.default.createFile(atPath: fileName, contents: data, attributes: nil)
     }

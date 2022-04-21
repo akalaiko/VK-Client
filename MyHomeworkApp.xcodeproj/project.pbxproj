@@ -40,6 +40,7 @@
 		AF7F7AF827FE5E95006044A7 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AF727FE5E95006044A7 /* Video.swift */; };
 		AF7F7AFA2801AEA4006044A7 /* FriendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AF92801AEA4006044A7 /* FriendService.swift */; };
 		AF7F7AFC2801C330006044A7 /* GroupsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7F7AFB2801C330006044A7 /* GroupsService.swift */; };
+		AF7FCF74281062A500B506A2 /* ImageCellProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF7FCF73281062A500B506A2 /* ImageCellProtocol.swift */; };
 		AF87FA9A277B8482004867DD /* FriendCVCHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF87FA98277B8482004867DD /* FriendCVCHeader.swift */; };
 		AF87FA9B277B8482004867DD /* FriendCVCHeader.xib in Resources */ = {isa = PBXBuildFile; fileRef = AF87FA99277B8482004867DD /* FriendCVCHeader.xib */; };
 		AF8E4F99276E0899007AD763 /* MyFriendsTVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF8E4F98276E0899007AD763 /* MyFriendsTVC.swift */; };
@@ -115,6 +116,7 @@
 		AF7F7AF727FE5E95006044A7 /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
 		AF7F7AF92801AEA4006044A7 /* FriendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendService.swift; sourceTree = "<group>"; };
 		AF7F7AFB2801C330006044A7 /* GroupsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupsService.swift; sourceTree = "<group>"; };
+		AF7FCF73281062A500B506A2 /* ImageCellProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCellProtocol.swift; sourceTree = "<group>"; };
 		AF87FA98277B8482004867DD /* FriendCVCHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendCVCHeader.swift; sourceTree = "<group>"; };
 		AF87FA99277B8482004867DD /* FriendCVCHeader.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = FriendCVCHeader.xib; sourceTree = "<group>"; };
 		AF8E4F98276E0899007AD763 /* MyFriendsTVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyFriendsTVC.swift; sourceTree = "<group>"; };
@@ -290,6 +292,7 @@
 			isa = PBXGroup;
 			children = (
 				AF7F7AE627FA08EB006044A7 /* ReusableView.swift */,
+				AF7FCF73281062A500B506A2 /* ImageCellProtocol.swift */,
 				AF7F7AE827FA09F8006044A7 /* UITableView(register+dequeue).swift */,
 				AF7F7AEA27FA6699006044A7 /* UICollectionView(register+dequeue).swift */,
 				AF91537A27F3AB6600CC7210 /* Date.swift */,
@@ -533,6 +536,7 @@
 				AF3FA8F927721EBA009A7E05 /* FriendPage.swift in Sources */,
 				AF7F7AF627FDD09A006044A7 /* FeedService.swift in Sources */,
 				AF8E4F9D276E0911007AD763 /* FriendCVC.swift in Sources */,
+				AF7FCF74281062A500B506A2 /* ImageCellProtocol.swift in Sources */,
 				AFE0BEE02798D21D00068B94 /* newsText.swift in Sources */,
 				AF186F6C276E0B2200B4E778 /* AllGroupsTVC.swift in Sources */,
 				AF7538C727B7376A006A2E63 /* UserToken.swift in Sources */,

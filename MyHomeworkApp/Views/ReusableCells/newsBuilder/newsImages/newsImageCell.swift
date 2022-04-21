@@ -16,6 +16,6 @@ class newsImageCell: UICollectionViewCell,UIGestureRecognizerDelegate {
         self.videoPlayButton.isHidden = video
         self.newsImage?.image = UIImage(named: "default")
         self.newsImage?.image = image
-        self.newsImage?.contentMode = .scaleAspectFit
+        self.newsImage?.contentMode = .scaleAspectFill
     }
 }

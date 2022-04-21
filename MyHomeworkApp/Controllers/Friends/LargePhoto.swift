@@ -7,6 +7,8 @@
 
 import UIKit
 import RealmSwift
+import Kingfisher
+import Alamofire
 
 final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     
@@ -73,7 +75,7 @@ final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
                         self.photoSubview.center.x = self.photo.center.x
                     }
             } completion: { isCompleted in
-                self.photo.image = self.photoSubview.image
+                self.photo.kf.setImage(with: URL(string: self.photos[self.chosenPhotoIndex]))
                 self.photo.alpha = 1
                 self.photoSubview.removeFromSuperview()
             }
@@ -103,8 +105,8 @@ final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         default:
             break
         }
-        photoSubview.kf.setImage(with: URL(string: photos[chosenPhotoIndex]))
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
+        photoSubview.kf.setImage(with: URL(string: photos[chosenPhotoIndex]))
         view.addSubview(photoSubview)
        }
 }

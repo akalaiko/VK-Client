@@ -14,4 +14,12 @@ struct Response<ItemsType: Decodable>: Decodable {
 struct Items<ItemsType: Decodable>: Decodable {
     let items: [ItemsType]
     let count: Int?
+    let nextFrom: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case items
+        case count
+        case nextFrom = "next_from"
+    }
+    
 }

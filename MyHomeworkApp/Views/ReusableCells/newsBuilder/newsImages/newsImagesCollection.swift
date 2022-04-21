@@ -8,45 +8,32 @@
 import UIKit
 
 class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
-    var currentNews: News? = nil {
-        didSet {
-            DispatchQueue.main.async {
-                self.collectionView.reloadData()
-            }
-        }
-    }
+    
+    var currentNews: News? = nil
+    var delegate: ImageCellDelegate?
     private var imageService: PhotoService?
-    var photoURLs: [String] {
-        var attachments = [String]()
-        attachments.removeAll()
-        currentNews?.attachment?.forEach { i in
-            if i.photo != nil {
-                guard let image = i.photo?.sizes.last?.url else { return }
-                attachments.append(image)
-            } else if i.video != nil {
-                guard let image = i.video?.image.last?.url else { return }
-                attachments.append(image)
-            } else { return }
-        }
-        return attachments
-    }
-    var numberOfItems = CGFloat()
+    var aspectRatio: CGFloat = 0.0
+    var photoURLs = [String]()
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         collectionView.delegate = self
         collectionView.dataSource = self
         imageService = PhotoService(container: collectionView)
-        
-        numberOfItems = CGFloat(photoURLs.count)
+
         configureLayout()
-     
+
         collectionView.register(newsImageCell.self)
+        collectionView.reloadData()
     }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        photoURLs.count
+    func configure(currentNews: News?, photoURLs: [String], aspectRatio: CGFloat) {
+        self.currentNews = currentNews
+        self.photoURLs = photoURLs
+        self.aspectRatio = aspectRatio
     }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { photoURLs.count }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: newsImageCell = collectionView.dequeueReusableCell(for: indexPath)
@@ -57,6 +44,10 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        delegate?.didSelectImage(photos: photoURLs, currentIndex: indexPath.row)
+    }
+    
     @IBOutlet var collectionView: UICollectionView!
     @IBOutlet var aspect11: NSLayoutConstraint!
     @IBOutlet var aspect21: NSLayoutConstraint!
@@ -64,12 +55,17 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
     @IBOutlet var aspect32: NSLayoutConstraint!
     
     func configureLayout() {
+        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         let width = UIScreen.main.bounds.width
+        let numberOfItems = CGFloat(photoURLs.count)
+        let newConstraint = aspect31.constraintWithMultiplier(aspectRatio)
+        
         aspect11.isActive = false
         aspect21.isActive = false
         aspect31.isActive = false
         aspect32.isActive = false
+        newConstraint.isActive = false
         
 
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -78,8 +74,9 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
         
         switch numberOfItems {
         case 1:
-            aspect11.isActive = true
-            layout.itemSize = CGSize(width: width, height: width)
+            let height = width * aspectRatio
+            newConstraint.isActive = true
+            layout.itemSize = CGSize(width: width, height: height)
         case 2:
             aspect21.isActive = true
             layout.itemSize = CGSize(width: width / numberOfItems, height: width / numberOfItems)
@@ -101,6 +98,12 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
         
         collectionView.collectionViewLayout = layout
         collectionView.reloadData()
+    }
+}
+
+extension NSLayoutConstraint {
+    func constraintWithMultiplier(_ multiplier: CGFloat) -> NSLayoutConstraint {
+        return NSLayoutConstraint(item: self.firstItem!, attribute: self.firstAttribute, relatedBy: self.relation, toItem: self.secondItem, attribute: self.secondAttribute, multiplier: multiplier, constant: self.constant)
     }
 }
 
