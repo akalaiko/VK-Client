@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct Video: Codable {
     let videoDescription: String?
@@ -21,17 +20,5 @@ struct Video: Codable {
         case duration, image
         case title
         case type, views
-    }
-}
-
-struct Size: Codable {
-    let height: Int?
-    let url: String
-    let width: Int?
-    
-    var aspectRatio: CGFloat { return CGFloat(height ?? 1)/CGFloat(width ?? 1) }
-
-    enum CodingKeys: String, CodingKey {
-        case height, url, width
     }
 }

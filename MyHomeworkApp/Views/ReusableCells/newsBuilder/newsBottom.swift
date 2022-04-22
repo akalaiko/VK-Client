@@ -12,11 +12,6 @@ class newsBottom: UITableViewCell {
     @IBOutlet var likeButton: UIButton!
     @IBOutlet var commentsButton: UIButton!
     @IBOutlet var shareButton: UIButton!
-   
-    
-    @IBAction func buttonPressed(_ sender: UIButton) {
-    }
-    
     
     func configure(isLiked: Bool, likesCounter: Int, commentCounter: Int, shareCounter: Int) {
         if isLiked {

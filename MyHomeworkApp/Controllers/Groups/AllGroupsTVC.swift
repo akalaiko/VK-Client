@@ -19,9 +19,7 @@ class AllGroupsTVC: UITableViewController {
     }
     var allGroupsFiltered = [Group]() {
         didSet {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            DispatchQueue.main.async { self.tableView.reloadData() }
         }
     }
     
@@ -39,13 +37,8 @@ class AllGroupsTVC: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: MyGroupsCell = tableView.dequeueReusableCell(for: indexPath)
-        
         let availableGroup = allGroupsFiltered[indexPath.row]
-
-        cell.configure(
-            name: availableGroup.name,
-            url: availableGroup.avatar)
-        
+        cell.configure( name: availableGroup.name, url: availableGroup.avatar)
         return cell
     }
     

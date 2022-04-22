@@ -25,7 +25,6 @@ class PhotoService {
         if !FileManager.default.fileExists(atPath: url.path) {
             try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
         }
-        
         return pathName
     }()
     
@@ -38,7 +37,6 @@ class PhotoService {
         } else {
             loadPhoto(atIndexPath: indexPath, byUrl: url)
         }
-        
         return image
     }
     
@@ -76,7 +74,6 @@ class PhotoService {
     private func saveImageToCache(url: String, image: UIImage) {
         guard let fileName = getFilePath(url: url),
               let data = image.jpegData(compressionQuality: 0.5) else { return }
-
         FileManager.default.createFile(atPath: fileName, contents: data, attributes: nil)
     }
 }

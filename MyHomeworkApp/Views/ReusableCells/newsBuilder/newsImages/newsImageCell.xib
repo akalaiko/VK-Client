@@ -21,6 +21,9 @@
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="play_video" translatesAutoresizingMaskIntoConstraints="NO" id="Jne-Dh-0rT">
                         <rect key="frame" x="37.5" y="37.5" width="25" height="25"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="Jne-Dh-0rT" secondAttribute="height" id="6Oa-fX-Jrx"/>
+                        </constraints>
                     </imageView>
                 </subviews>
             </view>
@@ -29,9 +32,8 @@
                 <constraint firstItem="zyf-83-5OV" firstAttribute="leading" secondItem="gTV-IL-0wX" secondAttribute="leading" id="0mc-IN-Hcl"/>
                 <constraint firstItem="Jne-Dh-0rT" firstAttribute="width" secondItem="zyf-83-5OV" secondAttribute="width" multiplier="0.25" id="FWG-Dy-Xfh"/>
                 <constraint firstAttribute="bottom" secondItem="zyf-83-5OV" secondAttribute="bottom" id="IE0-60-dZO"/>
-                <constraint firstItem="Jne-Dh-0rT" firstAttribute="height" secondItem="zyf-83-5OV" secondAttribute="height" multiplier="0.25" id="PHn-JM-uKX"/>
                 <constraint firstItem="Jne-Dh-0rT" firstAttribute="centerY" secondItem="zyf-83-5OV" secondAttribute="centerY" id="YdC-ko-f3d"/>
-                <constraint firstAttribute="trailing" secondItem="zyf-83-5OV" secondAttribute="trailing" id="cLP-JV-Ucr"/>
+                <constraint firstItem="zyf-83-5OV" firstAttribute="trailing" secondItem="gTV-IL-0wX" secondAttribute="trailing" id="cLP-JV-Ucr"/>
                 <constraint firstItem="Jne-Dh-0rT" firstAttribute="centerX" secondItem="zyf-83-5OV" secondAttribute="centerX" id="jNd-4k-BH4"/>
                 <constraint firstAttribute="top" secondItem="zyf-83-5OV" secondAttribute="top" id="z0i-La-kFW"/>
             </constraints>

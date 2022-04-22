@@ -13,11 +13,8 @@ final class FriendCVC: UICollectionViewController {
     var friend: UserRealm?
     private let networkService = NetworkService<Photos>()
     private var photos: [PhotoRealm]? {
-        didSet {
-            self.collectionView.reloadData()
-        }
+        didSet { self.collectionView.reloadData() }
     }
-    private var photosToken: NotificationToken?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,8 +27,6 @@ final class FriendCVC: UICollectionViewController {
         configureLayout()
         networkServiceFunction()
     }
-
-    // MARK: UICollectionViewDataSource
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { photos?.count ?? 0 }
     
@@ -47,7 +42,6 @@ final class FriendCVC: UICollectionViewController {
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
         let cell: FriendPage = collectionView.dequeueReusableCell(for: indexPath)
         let photo = photos?[indexPath.row]
         cell.configure(url: photo?.url ?? "", likes: photo?.likes ?? 0)
@@ -57,7 +51,6 @@ final class FriendCVC: UICollectionViewController {
     func configureLayout() {
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         let width = UIScreen.main.bounds.width
-
         layout.headerReferenceSize = CGSize(width: width, height: 120)
         layout.sectionHeadersPinToVisibleBounds = true
         layout.sectionInset = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
@@ -71,7 +64,7 @@ final class FriendCVC: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if let vc = storyboard?.instantiateViewController(withIdentifier: "showPhoto") as? LargePhoto {
             var photoURLs = [String]()
-            self.photos?.forEach { i in photoURLs.append(i.url) }
+            self.photos?.forEach { photo in photoURLs.append(photo.url) }
             vc.photos = photoURLs
             vc.chosenPhotoIndex = indexPath.row
             self.navigationController?.pushViewController(vc, animated: true)

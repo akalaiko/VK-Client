@@ -35,24 +35,12 @@
                                     </userDefinedRuntimeAttribute>
                                 </userDefinedRuntimeAttributes>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="j2t-hn-et1">
-                                <rect key="frame" x="0.0" y="0.0" width="58" height="58"/>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="plain"/>
-                                <connections>
-                                    <action selector="avatarPressed" destination="cGT-IF-TZa" eventType="touchUpInside" id="kE2-Ov-3mJ"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="j2t-hn-et1" firstAttribute="centerX" secondItem="TL3-8M-gSB" secondAttribute="centerX" id="CZ1-v6-5UU"/>
                             <constraint firstItem="TL3-8M-gSB" firstAttribute="leading" secondItem="mnf-xb-byO" secondAttribute="leading" id="E8d-Mx-JGj"/>
-                            <constraint firstItem="j2t-hn-et1" firstAttribute="centerY" secondItem="TL3-8M-gSB" secondAttribute="centerY" id="JGI-nq-X8D"/>
-                            <constraint firstItem="j2t-hn-et1" firstAttribute="width" secondItem="TL3-8M-gSB" secondAttribute="width" id="N2e-SG-PlP"/>
                             <constraint firstItem="TL3-8M-gSB" firstAttribute="top" secondItem="mnf-xb-byO" secondAttribute="top" id="NtH-dk-7ne"/>
                             <constraint firstAttribute="bottom" secondItem="TL3-8M-gSB" secondAttribute="bottom" id="QBX-Uj-i8q"/>
-                            <constraint firstItem="j2t-hn-et1" firstAttribute="height" secondItem="TL3-8M-gSB" secondAttribute="height" id="jic-8l-zhc"/>
                             <constraint firstAttribute="trailing" secondItem="TL3-8M-gSB" secondAttribute="trailing" id="qmD-JG-ibD"/>
                         </constraints>
                         <userDefinedRuntimeAttributes>

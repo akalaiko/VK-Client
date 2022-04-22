@@ -18,14 +18,9 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="none" translatesAutoresizingMaskIntoConstraints="NO" id="P2Y-o2-1F5">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="320"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="2:1" id="SJk-ri-tIM"/>
-                            <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="1:1" id="Tmr-Sp-wd7"/>
-                            <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="3:1" id="bDk-qi-HLI"/>
-                            <constraint firstAttribute="width" secondItem="P2Y-o2-1F5" secondAttribute="height" multiplier="3:2" priority="999" id="cTf-6N-nLg"/>
-                        </constraints>
-                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="fVP-cn-hpX">
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="0.0" minimumInteritemSpacing="0.0" id="fVP-cn-hpX">
                             <size key="itemSize" width="128" height="128"/>
                             <size key="headerReferenceSize" width="0.0" height="0.0"/>
                             <size key="footerReferenceSize" width="0.0" height="0.0"/>
@@ -35,17 +30,13 @@
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="bottom" secondItem="P2Y-o2-1F5" secondAttribute="bottom" id="CBG-Rd-46O"/>
-                    <constraint firstItem="P2Y-o2-1F5" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" id="MEd-re-Fu8"/>
+                    <constraint firstAttribute="top" secondItem="P2Y-o2-1F5" secondAttribute="top" id="MEd-re-Fu8"/>
                     <constraint firstAttribute="trailing" secondItem="P2Y-o2-1F5" secondAttribute="trailing" id="QNa-FF-Cyd"/>
-                    <constraint firstItem="P2Y-o2-1F5" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" id="fAi-fc-n2c"/>
+                    <constraint firstAttribute="leading" secondItem="P2Y-o2-1F5" secondAttribute="leading" id="fAi-fc-n2c"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <connections>
-                <outlet property="aspect11" destination="Tmr-Sp-wd7" id="PhT-rO-D2d"/>
-                <outlet property="aspect21" destination="SJk-ri-tIM" id="xXr-dN-hFo"/>
-                <outlet property="aspect31" destination="bDk-qi-HLI" id="jZc-NQ-f9d"/>
-                <outlet property="aspect32" destination="cTf-6N-nLg" id="7PB-Ci-Ga2"/>
                 <outlet property="collectionView" destination="P2Y-o2-1F5" id="qdL-3M-QuJ"/>
             </connections>
             <point key="canvasLocation" x="137.68115942028987" y="208.25892857142856"/>

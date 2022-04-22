@@ -27,9 +27,6 @@
                             <fontDescription key="titleFontDescription" style="UICTFontTextStyleBody"/>
                             <directionalEdgeInsets key="contentInsets" top="0.0" leading="0.0" bottom="0.0" trailing="5"/>
                         </buttonConfiguration>
-                        <connections>
-                            <action selector="buttonPressed:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="tbW-ZU-tba"/>
-                        </connections>
                     </button>
                     <button opaque="NO" alpha="0.90000000000000002" tag="1" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iUF-Pf-CBq">
                         <rect key="frame" x="48" y="13" width="38.5" height="17"/>

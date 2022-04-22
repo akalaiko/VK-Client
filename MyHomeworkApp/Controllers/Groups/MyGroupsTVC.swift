@@ -11,13 +11,10 @@ import RealmSwift
 final class MyGroupsTVC: UITableViewController, UISearchBarDelegate {
     
     @IBOutlet var myGroupsSearch: UISearchBar!
-
     private var groupsFiltered = [GroupRealm]()
     private var userGroups: [GroupRealm]? {
         didSet {
-            DispatchQueue.main.async {
-                self.sortGroups()
-            }
+            DispatchQueue.main.async { self.sortGroups() }
         }
     }
     
@@ -27,17 +24,13 @@ final class MyGroupsTVC: UITableViewController, UISearchBarDelegate {
         tableView.register(MyGroupsCell.self)
         userGroups = try? RealmService.load(type: GroupRealm.self)
         self.sortGroups()
-//        try? RealmService.clear()
     }
-
-    // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int { groupsFiltered.count }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: MyGroupsCell = tableView.dequeueReusableCell(for: indexPath)
         let myGroup = groupsFiltered[indexPath.row]
-
         cell.configure(name: myGroup.name, url: myGroup.avatar)
         return cell
     }

@@ -9,8 +9,7 @@
 import Foundation
 
 
-struct News {
-    
+struct News: Decodable {
     let sourceID: Int
     var avatarURL: String?
     var creatorName: String?
@@ -20,9 +19,7 @@ struct News {
     let likes: Likes?
     let reposts: Reposts?
     let comments: Comments?
-}
-
-extension News: Decodable {
+    
     enum CodingKeys: String, CodingKey {
         case sourceID = "source_id"
         case avatarURL
@@ -33,16 +30,6 @@ extension News: Decodable {
         case comments
         case likes
         case reposts
-    }
-}
-
-extension News: Comparable {
-    static func < (lhs: News, rhs: News) -> Bool {
-        lhs.date < rhs.date
-    }
-    
-    static func == (lhs: News, rhs: News) -> Bool {
-        lhs.date == rhs.date && lhs.sourceID == rhs.sourceID
     }
 }
 

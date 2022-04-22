@@ -19,24 +19,11 @@ final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        addGestureRecognizers()
 
         title = "Photo \(chosenPhotoIndex + 1) of \(photos.count)"
         photo.kf.setImage(with: URL(string: photos[chosenPhotoIndex]))
-
-        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
-            swipeRight.direction = .right
-            view.addGestureRecognizer(swipeRight)
-
-        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
-            swipeLeft.direction = .left
-            view.addGestureRecognizer(swipeLeft)
-        
-        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
-            swipeDown.direction = .down
-            view.addGestureRecognizer(swipeDown)
     }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool { true }
     
     @objc func swipePhoto(_ gesture: UISwipeGestureRecognizer) {
         switch gesture.direction {
@@ -109,4 +96,16 @@ final class LargePhoto: UIViewController, UIGestureRecognizerDelegate {
         photoSubview.kf.setImage(with: URL(string: photos[chosenPhotoIndex]))
         view.addSubview(photoSubview)
        }
+    
+    func addGestureRecognizers() {
+        let swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
+            swipeRight.direction = .right
+            view.addGestureRecognizer(swipeRight)
+        let swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
+            swipeLeft.direction = .left
+            view.addGestureRecognizer(swipeLeft)
+        let swipeDown = UISwipeGestureRecognizer(target: self, action: #selector(swipePhoto(_:)))
+            swipeDown.direction = .down
+            view.addGestureRecognizer(swipeDown)
+    }
 }

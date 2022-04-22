@@ -10,51 +10,46 @@ import UIKit
 class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollectionViewDataSource {
     
     @IBOutlet var collectionView: UICollectionView!
-    @IBOutlet var aspect11: NSLayoutConstraint!
-    @IBOutlet var aspect21: NSLayoutConstraint!
-    @IBOutlet var aspect31: NSLayoutConstraint!
-    @IBOutlet var aspect32: NSLayoutConstraint!
-    var newConstraint = NSLayoutConstraint()
     
     var currentNews: News? = nil
     var delegate: ImageCellDelegate?
     private var imageService: PhotoService?
     var aspectRatio = CGFloat()
-//    {
-//        if let aspectRatio = images[0]?.aspectRatio {
-//            newConstraint = aspect11.constraintWithMultiplier(aspectRatio)
-//            return aspectRatio
-//        }
-//        return 1
-//    }
     var photoURLs = [String]()
-    var images = [Photo?]()
-    
-    func configure(currentNews: News?, photoURLs: [String], aspectRatio: CGFloat) {
-//    func configure(currentNews: News?) {
+    static var collectionHeight = [IndexPath : CGFloat]()
+
+    func configure(currentNews: News?, indexPath: IndexPath) {
         guard let news = currentNews else { return }
         self.currentNews = news
-        self.photoURLs = photoURLs
-        self.aspectRatio = aspectRatio
-        newConstraint = aspect11.constraintWithMultiplier(aspectRatio)
+        setupVariables(news)
+        configureLayout()
+        newsImagesCollection.collectionHeight[indexPath] = collectionView.frame.size.height
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: false)
         collectionView.delegate = self
         collectionView.dataSource = self
         imageService = PhotoService(container: collectionView)
         collectionView.register(newsImageCell.self)
-
-        configureLayout()
-        
-//        print(currentNews?.text, "images: ",images.count, "photoURLs: ",photoURLs.count, "aspectRatio: ",aspectRatio)
     }
-    
-    override func prepareForReuse() {
-        aspectRatio = CGFloat()
+
+    func setupVariables( _ currentNews: News) {
+        var images = [Photo?]()
+        aspectRatio = 1
         photoURLs.removeAll()
-        images.removeAll()
+        
+        currentNews.attachment?.forEach { attachment in
+            if attachment.link != nil { images.append(attachment.link?.photo?.sizes.last) }
+            if attachment.photo != nil { images.append(attachment.photo?.sizes.last) }
+            if attachment.video != nil { images.append(attachment.video?.image.last) }
+        }
+
+        for index in images.indices where index < 9 {
+            if let image = images[index] { photoURLs.append(image.url) }
+        }
+        if let aspectRatio = images[0]?.aspectRatio {
+            self.aspectRatio = images.count == 1 ? aspectRatio : 1
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int { photoURLs.count }
@@ -62,7 +57,6 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: newsImageCell = collectionView.dequeueReusableCell(for: indexPath)
         let isVideo = currentNews?.attachment?[indexPath.row].video
-
         let image = imageService?.photo(atIndexPath: indexPath, byUrl: photoURLs[indexPath.row])
         cell.configure(image: image, video: isVideo == nil, aspectRatio: aspectRatio)
         return cell
@@ -73,51 +67,36 @@ class newsImagesCollection: UITableViewCell, UICollectionViewDelegate, UICollect
     }
     
     func configureLayout() {
-        
         let layout: UICollectionViewFlowLayout = UICollectionViewFlowLayout()
         let width = UIScreen.main.bounds.width
-        
-        aspect11.isActive = false
-        aspect21.isActive = false
-        aspect31.isActive = false
-        aspect32.isActive = false
-        newConstraint.isActive = false
-        
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumInteritemSpacing = 0
         layout.minimumLineSpacing = 0
         
         switch photoURLs.count {
         case 1:
+            collectionView.frame.size.height = width * aspectRatio
             layout.itemSize = CGSize(width: width, height: width * aspectRatio)
-            newConstraint.isActive = true
         case 2:
-            aspect21.isActive = true
+            collectionView.frame.size.height = width / 2
             layout.itemSize = CGSize(width: width / 2, height: width / 2)
         case 3:
-            aspect31.isActive = true
+            collectionView.frame.size.height = width / 3
             layout.itemSize = CGSize(width: width / 3, height: width / 3)
         case 4:
-            aspect11.isActive = true
+            collectionView.frame.size.height = width
             layout.itemSize = CGSize(width: width / 2, height: width / 2)
         case 5, 6:
-            aspect32.isActive = true
+            collectionView.frame.size.height = width * 2 / 3
             layout.itemSize = CGSize(width: width / 3, height: width / 3)
         case 7, 8, 9:
-            aspect11.isActive = true
+            collectionView.frame.size.height = width
             layout.itemSize = CGSize(width: width / 3, height: width / 3)
         default:
             break
         }
-        
         collectionView.collectionViewLayout = layout
         collectionView.reloadData()
-    }
-}
-
-extension NSLayoutConstraint {
-    func constraintWithMultiplier(_ multiplier: CGFloat) -> NSLayoutConstraint {
-        return NSLayoutConstraint(item: self.firstItem!, attribute: self.firstAttribute, relatedBy: self.relation, toItem: self.secondItem, attribute: self.secondAttribute, multiplier: multiplier, constant: self.constant)
     }
 }
 

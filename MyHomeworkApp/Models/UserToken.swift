@@ -12,6 +12,5 @@ final class UserToken {
     var userID: Int = 0
     
     static let instance = UserToken()
-    
     private init() { }
 }

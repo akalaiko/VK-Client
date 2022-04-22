@@ -21,5 +21,4 @@ struct Items<ItemsType: Decodable>: Decodable {
         case count
         case nextFrom = "next_from"
     }
-    
 }

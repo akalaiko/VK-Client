@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import UIKit
 
 struct Group {
     let id: Int
@@ -19,12 +18,6 @@ extension Group: Codable {
         case id
         case name
         case avatar = "photo_100"
-    }
-}
-
-extension Group: Equatable {
-    static func == (lhs: Group, rhs: Group) -> Bool {
-        return lhs.name == rhs.name
     }
 }
 

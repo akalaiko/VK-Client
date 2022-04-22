@@ -8,5 +8,5 @@
 import UIKit
 
 protocol ExpandableLabelDelegate {
-    func didPressButton(at indexPath: IndexPath)
+    func didTouchText(at indexPath: IndexPath)
 }
