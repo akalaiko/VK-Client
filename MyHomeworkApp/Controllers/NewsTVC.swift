@@ -17,6 +17,10 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
     private let feedService = FeedsService.instance
     var userNews = [News]() {
         didSet {
+            for index in userNews.indices {
+                let indexPath: IndexPath = [index,1]
+                textCellState[indexPath] = true
+            }
             DispatchQueue.main.async { self.tableView.reloadData() }
         }
     }
@@ -26,6 +30,7 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
     var aspectRatio = CGFloat()
     var photoURLs = [String]()
     var images = [Photo?]()
+    var textCellState = [IndexPath : Bool]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -59,6 +64,7 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
         case Identifier.top.rawValue:
             let cell: newsTop = tableView.dequeueReusableCell(for: indexPath)
             guard let source = feedService.getSource(news.sourceID) else { return cell }
+            cell.selectionStyle = .none
                 cell.configure(
                     url: source.0,
                     name: source.1,
@@ -67,10 +73,11 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
             
         case Identifier.text.rawValue:
             let cell: newsText = tableView.dequeueReusableCell(for: indexPath)
-            cell.configure(text: news.text ?? "")
+            guard let textIsTruncated = textCellState[indexPath] else { return cell}
+            cell.configure(text: news.text ?? "", indexPath: indexPath, textIsTruncated: textIsTruncated)
             cell.isHidden = news.text == ""
             cell.selectionStyle = .none
-            
+            cell.delegate = self
             return cell
             
         case Identifier.image.rawValue:
@@ -82,6 +89,7 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
             
         case Identifier.bottom.rawValue:
             let cell: newsBottom = tableView.dequeueReusableCell(for: indexPath)
+            cell.selectionStyle = .none
             cell.configure(
                 isLiked: false,
                 likesCounter: news.likes?.count ?? 0,
@@ -105,25 +113,27 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
             self.tableView.refreshControl?.endRefreshing()
     }
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let width = UIScreen.main.bounds.width
-        if indexPath.row == Identifier.image.rawValue {
-            switch photoURLs.count {
-                case 1:
-                    return width * aspectRatio
-                case 2:
-                    return width / 2
-                case 3:
-                    return width / 3
-                case 5,6:
-                    return width * 2 / 3
-                case 4,7,8,9:
-                    return width
-                default:
-                    return width
-                }
-        } else {
-            return UITableView.automaticDimension
+//        let width = UIScreen.main.bounds.width
+        if indexPath.row == Identifier.text.rawValue {
+            if userNews[indexPath.section].text == "" { return 0 }
         }
+//        if indexPath.row == Identifier.image.rawValue {
+//            switch photoURLs.count {
+//                case 1:
+//                    return width * aspectRatio
+//                case 2:
+//                    return width / 2
+//                case 3:
+//                    return width / 3
+//                case 5,6:
+//                    return width * 2 / 3
+//                case 4,7,8,9:
+//                    return width
+//                default:
+//                    return width
+//                }
+//        }
+            return UITableView.automaticDimension
     }
     
     func setupVariables( _ currentNews: News) {
@@ -155,6 +165,16 @@ extension NewsTVC: ImageCellDelegate {
             vc.chosenPhotoIndex = currentIndex
             self.navigationController?.pushViewController(vc, animated: true)
         }
+    }
+}
+
+extension NewsTVC: ExpandableLabelDelegate {
+    func didPressButton(at indexPath: IndexPath) {
+        print("updating table at:",indexPath)
+        
+        guard let state = textCellState[indexPath] else { return }
+        textCellState[indexPath] = !state
+        tableView.reloadRows(at: [indexPath], with: .none)
     }
 }
 

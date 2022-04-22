@@ -6,8 +6,6 @@ target 'MyHomeworkApp' do
 
 pod 'RealmSwift'
 pod 'Kingfisher'
-pod 'PromiseKit'
 pod 'Alamofire'
-pod 'ExpandableLabel'
 
 end
