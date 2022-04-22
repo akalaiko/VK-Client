@@ -11,7 +11,7 @@ import UIKit
 struct Video: Codable {
     let videoDescription: String?
     let duration: Int
-    let image: [Size]
+    let image: [Photo]
     let title: String
     let type: String
     let views: Int

@@ -22,14 +22,18 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
     }
     static var nextFrom: String?
     var isLoading = false
-    var variables: ([String], CGFloat) = ([],0)
+    
+    var aspectRatio = CGFloat()
+    var photoURLs = [String]()
+    var images = [Photo?]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        tableView.sectionHeaderTopPadding = 0
+        
         tableView.dataSource = self
         tableView.delegate = self
         tableView.prefetchDataSource = self
+        
         setupRefreshControl()
         
         tableView.register(newsTop.self)
@@ -50,7 +54,6 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let news = userNews[indexPath.section]
-        variables = setupVariables(news)
         
         switch indexPath.row {
         case Identifier.top.rawValue:
@@ -72,7 +75,8 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
             
         case Identifier.image.rawValue:
             let cell: newsImagesCollection = tableView.dequeueReusableCell(for: indexPath)
-            cell.configure(currentNews: news, photoURLs: variables.0, aspectRatio: variables.1)
+            setupVariables(news)
+            cell.configure(currentNews: news, photoURLs: photoURLs, aspectRatio: aspectRatio)
             cell.delegate = self
             return cell
             
@@ -89,45 +93,6 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
         }
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch indexPath.row {
-        case Identifier.image.rawValue:
-            let width = view.frame.width
-            let numberOfAttachments = variables.0.count
-            let aspectRatio = variables.1
-            if numberOfAttachments == 1 {
-                let cellHeight = width * aspectRatio
-                print(numberOfAttachments, aspectRatio, cellHeight)
-                return cellHeight
-            } else {
-                return UITableView.automaticDimension
-            }
-        default:
-            return UITableView.automaticDimension
-        }
-    }
-    
-    func setupVariables( _ currentNews: News) -> ([String], CGFloat) {
-            var attachments = [String]()
-            var onlyFirstAspectRatio: CGFloat = 0.0
-            currentNews.attachment?.forEach { i in
-                if i.photo != nil {
-                    guard let image = i.photo?.sizes.last else { return }
-                    if attachments.isEmpty { onlyFirstAspectRatio = image.aspectRatio }
-                    attachments.append(image.url)
-                } else if i.video != nil {
-                    guard let image = i.video?.image.last else { return }
-                    if attachments.isEmpty { onlyFirstAspectRatio = image.aspectRatio }
-                    attachments.append(image.url)
-                } else if i.link != nil {
-                    guard let image = i.link?.photo?.sizes.last else { return }
-                    if attachments.isEmpty { onlyFirstAspectRatio = image.aspectRatio }
-                    attachments.append(image.url)
-                } else { return }
-            }
-        return (attachments, onlyFirstAspectRatio)
-    }
-    
     fileprivate func setupRefreshControl() {
         tableView.refreshControl = UIRefreshControl()
         tableView.refreshControl?.addTarget(self, action: #selector(refreshNews), for: .valueChanged)
@@ -137,9 +102,48 @@ class NewsTVC: UITableViewController, UICollectionViewDelegate {
         DispatchQueue.global(qos: .userInteractive).async {
             self.feedService.getFeeds { self.userNews = self.feedService.userNews }
         }
-
-        DispatchQueue.main.async {
             self.tableView.refreshControl?.endRefreshing()
+    }
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let width = UIScreen.main.bounds.width
+        if indexPath.row == Identifier.image.rawValue {
+            switch photoURLs.count {
+                case 1:
+                    return width * aspectRatio
+                case 2:
+                    return width / 2
+                case 3:
+                    return width / 3
+                case 5,6:
+                    return width * 2 / 3
+                case 4,7,8,9:
+                    return width
+                default:
+                    return width
+                }
+        } else {
+            return UITableView.automaticDimension
+        }
+    }
+    
+    func setupVariables( _ currentNews: News) {
+        aspectRatio = CGFloat()
+        photoURLs.removeAll()
+        images.removeAll()
+        
+        currentNews.attachment?.forEach { attachment in
+            if attachment.link != nil { images.append(attachment.link?.photo?.sizes.last) }
+            if attachment.photo != nil { images.append(attachment.photo?.sizes.last) }
+            if attachment.video != nil { images.append(attachment.video?.image.last) }
+        }
+        
+        for index in images.indices where index < 9 {
+            guard let image = images[index] else { return }
+            photoURLs.append(image.url)
+        }
+        
+        if let aspectRatio = images[0]?.aspectRatio {
+            self.aspectRatio = aspectRatio
         }
     }
 }
@@ -157,9 +161,9 @@ extension NewsTVC: ImageCellDelegate {
 extension NewsTVC: UITableViewDataSourcePrefetching {
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         guard let maxSection = indexPaths.map({ $0.section }).max() else { return }
-        if maxSection > self.userNews.count - 3, !isLoading {
+        if maxSection > self.userNews.count - 5, !isLoading {
             isLoading = true
-            DispatchQueue.global(qos: .userInteractive).async {
+            DispatchQueue.global(qos: .background).async {
                 self.feedService.getFeeds(nextFrom: NewsTVC.nextFrom) {
                     self.userNews += self.feedService.userNews
                     self.isLoading = false

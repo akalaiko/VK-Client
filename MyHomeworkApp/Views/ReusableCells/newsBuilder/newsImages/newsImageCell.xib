@@ -18,9 +18,6 @@
                 <subviews>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="zyf-83-5OV">
                         <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
-                        <constraints>
-                            <constraint firstAttribute="width" secondItem="zyf-83-5OV" secondAttribute="height" multiplier="1:1" id="wtF-B0-esy"/>
-                        </constraints>
                     </imageView>
                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="play_video" translatesAutoresizingMaskIntoConstraints="NO" id="Jne-Dh-0rT">
                         <rect key="frame" x="37.5" y="37.5" width="25" height="25"/>

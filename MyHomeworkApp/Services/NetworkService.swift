@@ -74,7 +74,7 @@ final class NetworkService<ItemsType: Decodable>  {
                 URLQueryItem(name: "filters", value: "post, photo"),
                 URLQueryItem(name: "start_from", value: nextFrom),
                 URLQueryItem(name: "max_photos", value: "9"),
-                URLQueryItem(name: "count", value: "50"),
+                URLQueryItem(name: "count", value: "15"),
                 URLQueryItem(name: "source_ids", value: "friends,groups,pages"),
                 URLQueryItem(name: "v", value: "5.131"),
                 URLQueryItem(name: "access_token", value: "\(UserToken.instance.token)"),
